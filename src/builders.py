@@ -6,6 +6,7 @@ class VideoCodecBuilder:
         self._crf = 23
         self._preset = 'medium'
         self._scale = None
+        self._fps = None
 
     def set_codec(self, codec: str):
         self._video_codec = codec
@@ -19,8 +20,12 @@ class VideoCodecBuilder:
         self._preset = preset
         return self
 
-    def resize(self, width: int, height: int):
+    def set_scale(self, width: int, height: int = -1):
         self._scale = f"{width}:{height}"
+        return self
+
+    def set_fps(self, fps: int):
+        self.fps = fps
         return self
 
     def build(self) -> VideoFlags:

@@ -8,7 +8,6 @@ class VideoCodecType(str, Enum):
     H265 = "libx265"
     VP9 = "libvpx-vp9"
     MPEG4 = "mpeg4"
-    # Adicione outros conforme precisar
 
 class AudioCodecType(str, Enum):
     """
@@ -17,7 +16,7 @@ class AudioCodecType(str, Enum):
     AAC = "aac"
     MP3 = "libmp3lame"
     OPUS = "libopus"
-    COPY = "copy" # Só copia o áudio sem reprocessar
+    COPY = "copy"
 
 class Preset(str, Enum):
     """

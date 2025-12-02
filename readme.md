@@ -1,20 +1,20 @@
 # FFmpeg Engine
 
-Uma biblioteca Python para construção e execução de comandos FFmpeg, utilizando dois Design Patterns, [Builder](https://refactoring.guru/design-patterns/builder) e [Strategy](https://refactoring.guru/design-patterns/strategy).
+Uma biblioteca Python para construção e execução de comandos FFmpeg, utilizando dois Design Patterns, [Strategy](https://refactoring.guru/design-patterns/strategy) e [Builder](https://refactoring.guru/design-patterns/builder).
 
 ## 🎯 Motivação
 
 Usar os comandos FFmpeg dá muita flexibilidade, mas exige muita prática, guardar comandos, lembrar de flags, etc.
 Então por que não fazer um código para me ajudar e aproveitar para treinar uma matéria que acabei de aprender?
 
-Por isso fiz uma mini biblioteca em python usando ([Design Patterns](https://refactoring.guru/design-patterns)) para me ajudar converter vídeos, áudios e imagens sempre que eu precisar.
+Por isso fiz uma mini biblioteca em python, usando [Design Patterns](https://refactoring.guru/design-patterns), para me ajudar converter vídeos, áudios e imagens sempre que eu precisar.
 
 ## 🏗 Arquitetura
 
-O projeto utiliza 2 padrões de projeto principais para separar responsabilidades:
+O projeto utiliza 2 padrões de projeto para separar responsabilidades (buscar a atomicidade):
 
-1.  **Strategy (`interfaces.py`, `strategies.py`, `runner.py`):** Define *o que* são os codecs (Vídeo, Áudio, Imagem). Cada classe sabe gerar seus próprios argumentos de linha de comando.
-2.  **Builder (`builders.py`, `director.py`):** Define *como* criar esses codecs complexos passo-a-passo, evitando construtores gigantes.
+1.  **Strategy (`interfaces.py` e `strategies.py`):** Define **o que** são os Codecs (Vídeo, Áudio, Imagem). O `interfaces.py` é o contrato principal, e cada classe em `strategies.py` implementa a lógica para gerar seus próprios argumentos de linha de comando. (O `runner.py` é o Contexto que usa estas estratégias).
+2.  **Builder (`builders.py` e `director.py`):** Define **como** criar esses codecs complexos passo-a-passo. O `builders.py` monta o objeto, e o `director.py` (Diretor) aplica as "receitas" pré-definidas.
 
 ### 📂 Estrutura do Pacote
 
@@ -22,26 +22,21 @@ O projeto utiliza 2 padrões de projeto principais para separar responsabilidade
 ffmpeg_engine/
 │
 ├── src/
-│   ├── __init__.py
+|   ├── __init__.py
 │   ├── builders.py
-│   ├── director.py
-│   ├── enums.py
-│   ├── interfaces.py
-│   ├── runner.py
-│   └── strategies.py
-│   
-├── tests/
-│   ├── __init__.py
-│   ├── test_builders.py
-│   ├── test_runner.py
-│   └── test_strategies.py
+│   ├── strategies.py
+│   └── ...
 │
-├── exemple.py
-├── LICENSE
+├── tests/
+|   ├── __init__.py
+│   ├── test_builders.py
+│   └── ...
+│
+├── .gitignore
 ├── pyproject.toml
-└── readme.md
+└── ...
 ```
-
+.gitignore
 ## 🚀 Como Usar
 
 ### Exemplo Básico (Com Director)

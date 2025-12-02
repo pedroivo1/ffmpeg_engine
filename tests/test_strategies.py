@@ -1,20 +1,51 @@
 import pytest
-from src.strategies import VideoFlags
+from src.strategies import VideoFlags, AudioFlags 
 
-def test_video_codec_args_basic():
-    codec = VideoFlags()
+@pytest.mark.parametrize(
+    "codec_class, input_args, expected_output",
+    [
+        # Default Args
+        (VideoFlags, 
+         {'video_codec': 'libx264', 'crf': 23, 'preset': 'medium'},
+         ['-c:v', 'libx264', '-crf', '23', '-preset', 'medium']),
 
-    # Execution
-    args = codec.generate_command_args()
+        # Full Args
+        (VideoFlags, 
+         {'video_codec': 'libx264', 'crf': 20, 'preset': 'fast', 'scale': '720:480', 'fps': 30},
+         ['-c:v', 'libx264', '-crf', '20', '-preset', 'fast', '-vf', 'scale=720:480', '-r', '30']),
 
-    # Verification (Assert)
-    expected = ['-c:v', '', '-crf', '', '-preset', '']
-    assert args == expected
+        # Default Args + scale
+        (VideoFlags, 
+         {'video_codec': 'mpeg4', 'crf': 20, 'preset': 'fast', 'scale': '720:480'},
+         ['-c:v', 'mpeg4', '-crf', '20', '-preset', 'fast', '-vf', 'scale=720:480']),
 
-def test_video_codec_args_with_scale():
-    codec = VideoFlags(video_codec='libx264', crf=23, preset='fast', scale='1920:1080')
-    args = codec.generate_command_args()
+        # Default Args + fps
+        (VideoFlags, 
+         {'video_codec': 'libx265', 'crf': 20, 'preset': 'fast', 'fps': 24},
+         ['-c:v', 'libx265', '-crf', '20', '-preset', 'fast', '-r', '24']),
 
-    # Verifica se a lista contêm os argumentos de filtro
-    assert '-vf' in args
-    assert 'scale=1920:1080' in args
+        # Audio Transcodificado (AAC com Bitrate)
+        (AudioFlags, 
+         {'audio_codec': 'aac', 'bitrate': '128k'},
+         ['-c:a', 'aac', '-b:a', '128k']),
+
+        # Audio Cópia (Sem Bitrate)
+        (AudioFlags, 
+         {'audio_codec': 'copy', 'bitrate': None},
+         ['-c:a', 'copy'])
+    ]
+)
+
+def test_command_generation_matches_expected(codec_class, input_args, expected_output):
+    strategy = codec_class(**input_args)
+    result_args = strategy.generate_command_args()
+
+    # NOTA: O teste assume que a ordem das flags é fixa (c:v, crf, preset, scale, fps)
+    assert result_args == expected_output
+
+def test_optional_flags_are_not_added_when_none():
+    strategy = VideoFlags(video_codec='libx264', crf=23, preset='medium', scale=None, fps=None)
+    result_args = strategy.generate_command_args()
+
+    assert '-r' not in result_args
+    assert '-vf' not in result_args
