@@ -83,5 +83,5 @@ runner.run()
 
 ## 📋 Requisitos
 
-* **Python 3.8+**: como [instalar Python](https://youtu.be/9_8YBRuC_ak)
+* **Python 3.10+**: como [instalar Python](https://youtu.be/9_8YBRuC_ak)
 * **FFmpeg** instalado e acessível no `PATH` do sistema: como [instalar FFmpeg](https://www.youtube.com/watch?v=K7znsMo_48I&pp=ygUPZG93bmxvYWQgZmZtcGVn) 
