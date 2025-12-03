@@ -5,15 +5,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 class CommandRunner:
-    def __init__(self, input_path: str, output_path: str):
+    def __init__(self, input_path: str, output_path: str) -> None:
         self.input_path = input_path
         self.output_path = output_path
         self._codecs: list[MediaFlags] = []
 
-    def add_flags(self, codec: MediaFlags):
+    def add_flags(self, codec: MediaFlags) -> None:
         self._codecs.append(codec)
 
-    def run(self):
+    def run(self) -> None:
         command = ["ffmpeg", "-y", "-i", self.input_path]
         for codec in self._codecs:
             command.extend(codec.generate_command_args())

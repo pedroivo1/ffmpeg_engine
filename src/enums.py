@@ -1,18 +1,12 @@
 from enum import Enum
 
 class VideoCodecType(str, Enum):
-    """
-    Codecs de vídeo suportados.
-    """
     H264 = "libx264"
     H265 = "libx265"
     VP9 = "libvpx-vp9"
     MPEG4 = "mpeg4"
 
 class AudioCodecType(str, Enum):
-    """
-    Codecs de áudio suportados.
-    """
     AAC = "aac"
     MP3 = "libmp3lame"
     OPUS = "libopus"
@@ -22,7 +16,6 @@ class Preset(str, Enum):
     """
     Presets de velocidade de codificação do x264/x265.
     Quanto mais rápido, pior a compressão (arquivo maior).
-    Use o mais lento que sua paciência permitir!
     """
     # ====== MAIS RÁPIDO (Menor Compressão, Rápido) ======
     ULTRAFAST = "ultrafast"

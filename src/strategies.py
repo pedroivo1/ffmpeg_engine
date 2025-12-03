@@ -1,7 +1,7 @@
 from .interfaces import MediaFlags
 
 class VideoFlags(MediaFlags):
-    def __init__(self, video_codec: str, crf: int, preset: str, scale: str | None = None, fps: int | None = None):
+    def __init__(self, video_codec: str, crf: int, preset: str, scale: str | None = None, fps: int | None = None) -> None:
         self.video_codec = video_codec
         self.crf = crf
         self.preset = preset
@@ -20,9 +20,11 @@ class VideoFlags(MediaFlags):
         return args
 
 class AudioFlags(MediaFlags):
-    def __init__(self, audio_codec: str = 'aac', bitrate: str | None = None):
+    def __init__(self, audio_codec: str = 'aac', bitrate: str | None = None) -> None:
         self.audio_codec = audio_codec
-        self.bitrate = bitrate
+
+        if self.bitrate:
+            self.bitrate = bitrate
 
     def generate_command_args(self) -> list:
         codec = self.audio_codec if self.audio_codec else "copy"

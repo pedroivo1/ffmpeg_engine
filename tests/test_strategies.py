@@ -9,7 +9,7 @@ from src.strategies import VideoFlags, AudioFlags
          {'video_codec': 'libx264', 'crf': 23, 'preset': 'medium'},
          ['-c:v', 'libx264', '-crf', '23', '-preset', 'medium']),
 
-        # Full Args
+        # All Args
         (VideoFlags, 
          {'video_codec': 'libx264', 'crf': 20, 'preset': 'fast', 'scale': '720:480', 'fps': 30},
          ['-c:v', 'libx264', '-crf', '20', '-preset', 'fast', '-vf', 'scale=720:480', '-r', '30']),
