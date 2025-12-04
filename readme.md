@@ -28,7 +28,6 @@ ffmpeg_engine/
 │   └── ...
 │
 ├── tests/
-|   ├── e2e/
 │   ├── integration/
 │   └── unit/...
 │
@@ -47,18 +46,15 @@ def main():
     builder = VideoCodecBuilder()
 
     # Configurando vídeo (H.265, CRF 30)
-    video_strategy = builder.set_codec('libx265').set_crf(30).build()
+    video_flags = builder.set_codec('libx265').set_crf(30).build()
     
     # Configurando áudio (AAC 48k)
-    audio_strategy = AudioFlags(audio_codec='aac', bitrate='48k')
+    audio_flags = AudioFlags(audio_codec='aac', bitrate='48k')
 
     # Caminhos relativos ou absolutos
-    input_path = "video_aula_01.mp4"
-    output_path = "video_aula_01_otimizado.mp4"
-
-    runner = CommandRunner(input_path, output_path)
-    runner.add_flags(video_strategy)
-    runner.add_flags(audio_strategy)
+    runner = CommandRunner("video_aula_01.mp4", "video_aula_01_otimizado.mp4")
+    runner.add_flags(video_flags)
+    runner.add_flags(audio_flags)
 
     print("🚀 Iniciando conversão...")
     runner.run()
@@ -68,14 +64,25 @@ if __name__ == "__main__":
     main()
 ```
 
-## 📋 Requisitos
 
-* **Python 3.10+**: como [instalar Python](https://youtu.be/9_8YBRuC_ak)
-* **FFmpeg** instalado e acessível no `PATH` do sistema: como [instalar FFmpeg](https://www.youtube.com/watch?v=K7znsMo_48I&pp=ygUPZG93bmxvYWQgZmZtcGVn) 
 
 ## 📦 Instalação
 
+### Como Instalar a Biblioteca
+Execute no terminal:
 ```bash
-git clone [https://github.com/seu-usuario/ffmpeg-engine.git](https://github.com/pedroivo1/ffmpeg-engine.git)
+git clone https://github.com/pedroivo1/ffmpeg_engine.git
+```
+
+Em seguida, execute:
+```bash
 cd ffmpeg-engine
 pip install .
+```
+
+### 📋 Requisitos
+
+| Requisito | Como Instalar |
+| :--- | :--- |
+| **Python 3.10+** | [Python](https://youtu.be/9_8YBRuC_ak) |
+| **FFmpeg** | [FFmpeg](https://www.youtube.com/watch?v=K7znsMo_48I&pp=ygUPZG93bmxvYWQgZmZtcGVn) |
