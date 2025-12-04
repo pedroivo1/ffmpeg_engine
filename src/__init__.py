@@ -2,7 +2,7 @@ from .interfaces import MediaFlags
 from .flags import VideoFlags, AudioFlags, ImageFlags
 from .builders import VideoCodecBuilder
 from .director import CodecDirector
-from .runner import CommandRunner
+from .runner import FFmpegRunner
 
 __all__ = [
     'MediaFlags',
@@ -11,5 +11,5 @@ __all__ = [
     'ImageFlags',
     'VideoCodecBuilder',
     'CodecDirector',
-    'CommandRunner',
+    'FFmpegRunner',
 ]

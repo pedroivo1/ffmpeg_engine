@@ -13,7 +13,7 @@ Por isso fiz uma mini biblioteca em python, usando [Design Patterns](https://ref
 
 O projeto utiliza 2 padrões de projeto para separar responsabilidades (buscar a atomicidade):
 
-1.  **Strategy (`interfaces.py` e `strategies.py`):** Define **o que** são os Codecs (Vídeo, Áudio, Imagem). O `interfaces.py` é o contrato principal, e cada classe em `strategies.py` implementa a lógica para gerar seus próprios argumentos de linha de comando. (O `runner.py` é o Contexto que usa estas estratégias).
+1.  **Strategy (`interfaces.py` e `flags.py`):** Define **o que** são os Codecs (Vídeo, Áudio, Imagem). O `interfaces.py` é o contrato principal, e cada classe em `flags.py` implementa a lógica para gerar seus próprios argumentos de linha de comando. (O `runner.py` é o Contexto que usa estas estratégias).
 2.  **Builder (`builders.py` e `director.py`):** Define **como** criar esses codecs complexos passo-a-passo. O `builders.py` monta o objeto, e o `director.py` (Diretor) aplica as "receitas" pré-definidas.
 
 ### 📂 Estrutura do Pacote
@@ -28,60 +28,56 @@ ffmpeg_engine/
 │   └── ...
 │
 ├── tests/
-|   ├── __init__.py
-│   ├── test_builders.py
-│   └── ...
+|   ├── e2e/
+│   ├── integration/
+│   └── unit/...
 │
-├── .gitignore
 ├── pyproject.toml
 └── ...
 ```
-.gitignore
-## 🚀 Como Usar
 
-### Exemplo Básico (Com Director)
+## 🚀 Como Usar
 
 Ideal para configurações padrão sem dor de cabeça. O Director aplica as "receitas" pré-definidas.
 
 ```python
-from ffmpeg_engine import VideoCodecBuilder, CodecDirector, FFmpegRunner, AudioCodec
+from ffmpeg_engine.src.builders import VideoCodecBuilder
+from ffmpeg_engine.src.runner import CommandRunner
+from ffmpeg_engine.src.strategies import AudioFlags
 
-# 1. Configuração
-builder = VideoCodecBuilder()
-director = CodecDirector(builder)
+def main():
+    builder = VideoCodecBuilder()
 
-# Aplica o preset de video no builder
-director.make_video()
-video_strategy = builder.build()
+    # Configurando vídeo (H.265, CRF 30)
+    video_strategy = builder.set_codec('libx265').set_crf(30).build()
+    
+    # Configurando áudio (AAC 48k)
+    audio_strategy = AudioFlags(audio_codec='aac', bitrate='48k')
 
-# 2. Execução
-runner = FFmpegRunner("input.mp4", "output.mp4")
-runner.add_strategy(video_strategy)            # Vídeo configurado
-runner.add_strategy(AudioCodec())              # Áudio padrão (AAC)
+    # Caminhos relativos ou absolutos
+    input_path = "video_aula_01.mp4"
+    output_path = "video_aula_01_otimizado.mp4"
 
-runner.run()
-```
+    runner = CommandRunner(input_path, output_path)
+    runner.add_flags(video_strategy)
+    runner.add_flags(audio_strategy)
 
-### Exemplo Avançado (Builder Manual)
+    print("🚀 Iniciando conversão...")
+    runner.run()
+    print("✅ Processo finalizado!")
 
-Ideal para quando você precisa de controle total sobre parâmetros específicos, sem usar presets.
-
-```python
-from ffmpeg_engine import VideoCodecBuilder, FFmpegRunner
-
-# Construção manual fluente (Method Chaining)
-custom_video = (VideoCodecBuilder()
-                .set_codec("libvpx-vp9")
-                .set_crf(30)
-                .resize(1280, 720)
-                .build())
-
-runner = FFmpegRunner("input.mov", "output.webm")
-runner.add_strategy(custom_video)
-runner.run()
+if __name__ == "__main__":
+    main()
 ```
 
 ## 📋 Requisitos
 
 * **Python 3.10+**: como [instalar Python](https://youtu.be/9_8YBRuC_ak)
 * **FFmpeg** instalado e acessível no `PATH` do sistema: como [instalar FFmpeg](https://www.youtube.com/watch?v=K7znsMo_48I&pp=ygUPZG93bmxvYWQgZmZtcGVn) 
+
+## 📦 Instalação
+
+```bash
+git clone [https://github.com/seu-usuario/ffmpeg-engine.git](https://github.com/pedroivo1/ffmpeg-engine.git)
+cd ffmpeg-engine
+pip install .

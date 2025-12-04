@@ -1,10 +1,10 @@
 from unittest.mock import patch
-from src.runner import CommandRunner
+from src.runner import FFmpegRunner
 from src.flags import VideoFlags
 
 @patch('src.runner.subprocess.run')
 def test_runner_calls_subprocess_correctly(mock_subprocess):
-    r = CommandRunner("input.mp4", "output.mp4")
+    r = FFmpegRunner("input.mp4", "output.mp4")
     codec = VideoFlags(video_codec='libx264', crf=23, preset='fast')
     r.add_flags(codec)
 
