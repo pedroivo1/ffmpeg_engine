@@ -1,5 +1,5 @@
 import pytest
-from src.strategies import VideoFlags, AudioFlags 
+from src.flags import VideoFlags, AudioFlags 
 
 @pytest.mark.parametrize(
     "codec_class, input_args, expected_output",
@@ -23,7 +23,26 @@ from src.strategies import VideoFlags, AudioFlags
         (VideoFlags, 
          {'video_codec': 'libx265', 'crf': 20, 'preset': 'fast', 'fps': 24},
          ['-c:v', 'libx265', '-crf', '20', '-preset', 'fast', '-r', '24']),
+    ]
+)
+def test_video_command_generation_matches_expected(codec_class, input_args, expected_output):
+    strategy = codec_class(**input_args)
+    result_args = strategy.generate_command_args()
 
+    assert result_args == expected_output
+
+
+def test_optional_flags_are_not_added_when_none():
+    strategy = VideoFlags(video_codec='libx264', crf=23, preset='medium', scale=None, fps=None)
+    result_args = strategy.generate_command_args()
+
+    assert '-r' not in result_args
+    assert '-vf' not in result_args
+
+
+@pytest.mark.parametrize(
+    "codec_class, input_args, expected_output",
+    [
         # Audio Transcodificado (AAC com Bitrate)
         (AudioFlags, 
          {'audio_codec': 'aac', 'bitrate': '128k'},
@@ -35,17 +54,8 @@ from src.strategies import VideoFlags, AudioFlags
          ['-c:a', 'copy'])
     ]
 )
-
-def test_command_generation_matches_expected(codec_class, input_args, expected_output):
+def test_audio_command_generation_matches_expected(codec_class, input_args, expected_output):
     strategy = codec_class(**input_args)
     result_args = strategy.generate_command_args()
 
-    # NOTA: O teste assume que a ordem das flags é fixa (c:v, crf, preset, scale, fps)
     assert result_args == expected_output
-
-def test_optional_flags_are_not_added_when_none():
-    strategy = VideoFlags(video_codec='libx264', crf=23, preset='medium', scale=None, fps=None)
-    result_args = strategy.generate_command_args()
-
-    assert '-r' not in result_args
-    assert '-vf' not in result_args

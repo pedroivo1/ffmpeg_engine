@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .strategies import VideoFlags
+from .flags import VideoFlags
 
 class VideoCodecBuilder:
     def __init__(self) -> None: 
@@ -26,7 +26,7 @@ class VideoCodecBuilder:
         return self
 
     def set_fps(self, fps: int) -> VideoCodecBuilder:
-        self.fps = fps
+        self._fps = fps
         return self
 
     def build(self) -> VideoFlags:
@@ -34,5 +34,6 @@ class VideoCodecBuilder:
             video_codec=self._video_codec,
             crf=self._crf,
             preset=self._preset,
-            scale=self._scale
+            scale=self._scale,
+            fps=self._fps
         )

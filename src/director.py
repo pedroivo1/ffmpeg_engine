@@ -1,5 +1,5 @@
 from .builders import VideoCodecBuilder
-from .strategies import VideoFlags
+from .flags import VideoFlags
 
 class CodecDirector:
     def __init__(self, builder: VideoCodecBuilder):
