@@ -27,7 +27,7 @@ class FFmpegRunner:
             self.run_batch()
 
         else:
-            raise ValueError("O input deve ser um arquivo ou pasta.")
+            raise ValueError('O input deve ser um arquivo ou pasta.')
 
 
     def run_batch(self) -> None:
@@ -46,7 +46,7 @@ class FFmpegRunner:
         for i, video_file in enumerate(files, start=1):
             target_file = self.output_path / video_file.name
 
-            logger.info(f"--- Processando [{i}/{total}]: {video_file.name} ---")
+            logger.info(f'--- Processando [{i}/{total}]: {video_file.name} ---')
             try:
                 self.run_file(video_file, target_file)
             except Exception as e:
@@ -54,16 +54,16 @@ class FFmpegRunner:
 
 
     def run_file(self, input_file: Path, output_file: Path) -> None:
-        command = ["ffmpeg", "-y", "-i", str(input_file)]
+        command = ['ffmpeg', '-y', '-i', str(input_file)]
 
         for codec in self._codecs:
             command.extend(codec.generate_command_args())
         command.append(str(output_file))
 
-        logger.info(f"Executando: {' '.join(command)}")
+        logger.info(f'Executando: {' '.join(command)}')
         try:
             subprocess.run(command, check=True, text=True)
-            logger.info("Comando executado com sucesso.")
+            logger.info('Comando executado com sucesso.')
         except subprocess.CalledProcessError as e:
-            logger.error(f"FFmpeg falhou com código {e.returncode}.")
+            logger.error(f'FFmpeg falhou com código {e.returncode}.')
             raise e

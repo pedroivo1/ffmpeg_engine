@@ -9,13 +9,13 @@ class VideoFlags(MediaFlags):
         self.fps = fps
 
     def generate_command_args(self) -> list:
-        args = ["-c:v", self.video_codec, "-crf", str(self.crf), "-preset", self.preset]
+        args = ['-c:v', self.video_codec, '-crf', str(self.crf), '-preset', self.preset]
 
         if self.scale:
-            args.extend(["-vf", f"scale={self.scale}"])
+            args.extend(['-vf', f'scale={self.scale}'])
 
         if self.fps:
-            args.extend(["-r", str(self.fps)])
+            args.extend(['-r', str(self.fps)])
 
         return args
 
@@ -26,10 +26,10 @@ class AudioFlags(MediaFlags):
         self.bitrate = bitrate
 
     def generate_command_args(self) -> list:
-        args = ["-c:a", self.audio_codec]
+        args = ['-c:a', self.audio_codec]
         
-        if self.bitrate and self.audio_codec != "copy":
-            args.extend(["-b:a", self.bitrate])
+        if self.bitrate and self.audio_codec != 'copy':
+            args.extend(['-b:a', self.bitrate])
             
         return args
 
