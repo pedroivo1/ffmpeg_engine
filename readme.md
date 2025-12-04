@@ -38,8 +38,6 @@ ffmpeg_engine/
 
 ## 🚀 Como Usar
 
-Ideal para configurações padrão sem dor de cabeça. O Director aplica as "receitas" pré-definidas.
-
 ```python
 from ffmpeg_engine.src.builders import VideoCodecBuilder
 from ffmpeg_engine.src.runner import CommandRunner
