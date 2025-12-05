@@ -2,6 +2,7 @@ from .interfaces import MediaFlags
 
 class VideoFlags(MediaFlags):
     def __init__(self, video_codec: str, crf: int, preset: str, scale: str = None, fps: int = None) -> None:
+        
         self.video_codec = video_codec
         self.crf = crf
         self.preset = preset
@@ -35,4 +36,5 @@ class AudioFlags(MediaFlags):
 
 
 class ImageFlags(MediaFlags):
-    pass
+    def __init__(self):
+        pass

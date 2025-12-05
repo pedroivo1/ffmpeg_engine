@@ -62,6 +62,7 @@ class FFmpegRunner:
 
         logger.info(f'Executando: {' '.join(command)}')
         try:
+            print(command)
             subprocess.run(command, check=True, text=True)
             logger.info('Comando executado com sucesso.')
         except subprocess.CalledProcessError as e:

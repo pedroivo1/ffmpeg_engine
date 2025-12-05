@@ -38,6 +38,8 @@ def test_video_command_generation_matches_expected(codec_class, input_args, expe
 
     result_args = flags.generate_command_args()
 
+    print(result_args)
+
     assert result_args == expected_output
 
 
