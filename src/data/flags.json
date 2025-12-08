@@ -1,0 +1,220 @@
+{
+  "global_options": [
+    {
+      "flag": "-y",
+      "name": "Yes (Overwrite)",
+      "description": "Sobrescreve arquivos de saída sem pedir confirmação."
+    },
+    {
+      "flag": "-n",
+      "name": "No (Do not overwrite)",
+      "description": "Não sobrescreve arquivos de saída; sai imediatamente se o arquivo já existir."
+    },
+    {
+      "flag": "-hide_banner",
+      "name": "Hide Banner",
+      "description": "Suprime as informações de build e versão exibidas no início da execução."
+    },
+    {
+      "flag": "-loglevel",
+      "name": "Log Level",
+      "description": "Define o nível de detalhe dos logs (ex: quiet, panic, fatal, error, warning, info, verbose, debug)."
+    },
+    {
+      "flag": "-stats",
+      "name": "Statistics",
+      "description": "Imprime o progresso da codificação/estatísticas (ativado por padrão)."
+    },
+    {
+      "flag": "-version",
+      "name": "Version",
+      "description": "Mostra a versão do FFmpeg."
+    }
+  ],
+  "input_options": [
+    {
+      "flag": "-i",
+      "name": "Input File",
+      "description": "URL ou caminho do arquivo de entrada."
+    },
+    {
+      "flag": "-f",
+      "name": "Format Force",
+      "description": "Força o formato do arquivo de entrada (útil para pipes ou raw data)."
+    },
+    {
+      "flag": "-ss",
+      "name": "Start Seek (Input)",
+      "description": "Pula para um tempo específico antes de começar a decodificar (rápido, mas menos preciso se fora de keyframes)."
+    },
+    {
+      "flag": "-t",
+      "name": "Duration (Input)",
+      "description": "Limita a duração da leitura do input."
+    },
+    {
+      "flag": "-stream_loop",
+      "name": "Stream Loop",
+      "description": "Define quantas vezes o input deve ser repetido (ex: -1 para loop infinito)."
+    },
+    {
+      "flag": "-re",
+      "name": "Read Native",
+      "description": "Lê a entrada na taxa de quadros nativa (útil para streaming ao vivo)."
+    }
+  ],
+  "output_options": {
+    "image": [
+      {
+        "flag": "-c:v",
+        "alias": "-vcodec",
+        "name": "Image Codec",
+        "description": "Define o codec da imagem (ex: png, mjpeg)."
+      },
+      {
+        "flag": "-vf",
+        "alias": "-filter:v",
+        "name": "Video/Image Filter",
+        "description": "Define filtros visuais (scale, crop, rotate, etc)."
+      },
+      {
+        "flag": "-aspect",
+        "name": "Aspect Ratio",
+        "description": "Força a proporção de aspecto (ex: 16:9, 4:3)."
+      },
+      {
+        "flag": "-f",
+        "name": "Format Force",
+        "description": "Força o formato do contêiner de saída (ex: image2)."
+      },
+      {
+        "flag": "-fs",
+        "name": "File Size Limit",
+        "description": "Limita o tamanho do arquivo de saída."
+      }
+    ],
+    "video": [
+      {
+        "flag": "-c:v",
+        "alias": "-vcodec",
+        "name": "Video Codec",
+        "description": "Define o codec de vídeo (ex: libx264, libx265, copy)."
+      },
+      {
+        "flag": "-vf",
+        "alias": "-filter:v",
+        "name": "Video Filter",
+        "description": "Define filtros de vídeo (scale, crop, rotate, etc)."
+      },
+      {
+        "flag": "-aspect",
+        "name": "Aspect Ratio",
+        "description": "Força a proporção de aspecto do vídeo (ex: 16:9, 4:3)."
+      },
+      {
+        "flag": "-f",
+        "name": "Format Force",
+        "description": "Força o formato do contêiner de saída."
+      },
+      {
+        "flag": "-fs",
+        "name": "File Size Limit",
+        "description": "Limita o tamanho do arquivo de saída (ex: 10M)."
+      },
+      {
+        "flag": "-b:v",
+        "name": "Video Bitrate",
+        "description": "Define a taxa de bits do vídeo (ex: 1M, 500k)."
+      },
+      {
+        "flag": "-crf",
+        "name": "Constant Rate Factor",
+        "description": "Controle de qualidade para x264/x265 (0-51, onde menor é melhor qualidade. Padrão: 23)."
+      },
+      {
+        "flag": "-r",
+        "name": "Frame Rate",
+        "description": "Define a taxa de quadros (FPS) do vídeo de saída."
+      },
+      {
+        "flag": "-vn",
+        "name": "Video No",
+        "description": "Desabilita a gravação de vídeo (apenas áudio será salvo)."
+      },
+      {
+        "flag": "-preset",
+        "name": "Encoder Preset",
+        "description": "Define a velocidade de compressão vs eficiência (ultrafast, superfast, slow, etc)."
+      },
+      {
+        "flag": "-t",
+        "name": "Duration (Output)",
+        "description": "Para de gravar a saída após a duração especificada."
+      },
+      {
+        "flag": "-movflags",
+        "name": "MOV Flags",
+        "description": "Flags específicas para container MP4 (ex: +faststart para streaming web)."
+      },
+      {
+        "flag": "-shortest",
+        "name": "Shortest",
+        "description": "Finaliza a codificação quando o stream mais curto acabar."
+      },
+      {
+        "flag": "-map",
+        "name": "Map Streams",
+        "description": "Seleciona quais streams do input vão para o output."
+      }
+    ],
+    "audio": [
+      {
+        "flag": "-c:a",
+        "alias": "-acodec",
+        "name": "Audio Codec",
+        "description": "Define o codec de áudio (ex: aac, libmp3lame, copy)."
+      },
+      {
+        "flag": "-b:a",
+        "name": "Audio Bitrate",
+        "description": "Define a taxa de bits do áudio (ex: 128k, 192k, 320k)."
+      },
+      {
+        "flag": "-an",
+        "name": "Audio No",
+        "description": "Desabilita a gravação de áudio."
+      },
+      {
+        "flag": "-ar",
+        "name": "Audio Rate",
+        "description": "Define a frequência de amostragem do áudio (ex: 44100, 48000)."
+      },
+      {
+        "flag": "-ac",
+        "name": "Audio Channels",
+        "description": "Define o número de canais de áudio (ex: 1 para mono, 2 para estéreo)."
+      },
+      {
+        "flag": "-af",
+        "alias": "-filter:a",
+        "name": "Audio Filter",
+        "description": "Define filtros de áudio (volume, equalizer, etc)."
+      },
+      {
+        "flag": "-f",
+        "name": "Format Force",
+        "description": "Força o formato do contêiner de áudio."
+      },
+      {
+        "flag": "-t",
+        "name": "Duration (Output)",
+        "description": "Para de gravar a saída após a duração especificada."
+      },
+      {
+        "flag": "-map",
+        "name": "Map Streams",
+        "description": "Seleciona quais streams do input vão para o output."
+      }
+    ]
+  }
+}
