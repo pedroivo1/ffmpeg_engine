@@ -1,7 +1,7 @@
 import subprocess
 import logging
 from pathlib import Path
-from .interfaces import Flags
+from .interfaces import Options
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -10,10 +10,10 @@ class FFmpegRunner:
     def __init__(self, input_path: str | Path, output_path: str | Path) -> None:
         self.input_path = Path(input_path)
         self.output_path = Path(output_path)
-        self._codecs: list[Flags] = []
+        self._codecs: list[Options] = []
 
 
-    def add_flags(self, codec: Flags) -> None:
+    def add_flags(self, codec: Options) -> None:
         self._codecs.append(codec)
 
 

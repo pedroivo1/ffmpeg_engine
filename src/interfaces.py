@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
-class Flags(ABC):
+class Options(ABC):
 
     def _log_invalid_value(self, attr_name: str, value: str | int | float | None):
         class_name = self.__class__.__name__

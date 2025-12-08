@@ -1,7 +1,7 @@
 import pytest
 import logging
 from datetime import timedelta
-from src.flags import GlobalOptions, ImageInputOptions
+from src.flags import GlobalOptions, ImageInputOptions, AudioInputOptions
 
 
 
@@ -45,7 +45,6 @@ INVALID_GLOBAL_OPTIONS = [
 ]
 
 
-
 @pytest.mark.parametrize('global_flags, input_args, expected_output', VALID_GLOBAL_OPTIONS)
 def test_global_flags_parameters(global_flags, input_args, expected_output):
     flag_generator = global_flags(**input_args)
@@ -75,6 +74,8 @@ def test_global_flags_logs_on_invalid_input(caplog, global_flags, input_args, ex
     expected_msg = f'Invalid value \'{value_passed}\' received for \'{attr_name}\' on GlobalOptions.'
 
     assert expected_msg in caplog.text
+
+
 
 
 
@@ -163,79 +164,99 @@ def test_image_in_flags_logs_on_invalid_input(caplog, image_flags, input_args, e
     assert expected_msg in caplog.text
 
 
-# @pytest.mark.parametrize(
-#     'codec_class, input_args, expected_output',
-#     [
-#         # Default Args
-#         (VideoFlags, 
-#             {'video_codec': 'libx264', 'crf': 23, 'preset': 'medium'},
-#             ['-c:v', 'libx264', '-crf', '23', '-preset', 'medium']),
-
-#         # All Args
-#         (VideoFlags, 
-#             {'video_codec': 'libx264', 'crf': 20, 'preset': 'fast', 'scale': '720:480', 'fps': 30},
-#             ['-c:v', 'libx264', '-crf', '20', '-preset', 'fast', '-vf', 'scale=720:480', '-r', '30']),
-
-#         # Default Args + scale
-#         (VideoFlags, 
-#             {'video_codec': 'mpeg4', 'crf': 20, 'preset': 'fast', 'scale': '720:480'},
-#             ['-c:v', 'mpeg4', '-crf', '20', '-preset', 'fast', '-vf', 'scale=720:480']),
-
-#         # Default Args + fps
-#         (VideoFlags, 
-#             {'video_codec': 'libx265', 'crf': 20, 'preset': 'fast', 'fps': 24},
-#             ['-c:v', 'libx265', '-crf', '20', '-preset', 'fast', '-r', '24']),
-#     ]
-# )
-
-# def test_video_command_generation_matches_expected(codec_class, input_args, expected_output):
-#     '''
-#     Do the generated flags, by VideoFlags, match the expected output?
-#     '''
-#     flags = codec_class(**input_args)
-
-#     result_args = flags.generate_command_args()
-
-#     assert result_args == expected_output
 
 
-# def test_optional_flags_are_not_added_when_none():
-#     '''
-#     Are flags that default to None correctly omitted from the command?
-#     '''
-#     flags = VideoFlags(video_codec='libx264', crf=23, preset='medium', scale=None, fps=None)
 
-#     result_args = flags.generate_command_args()
+VALID_AUDIO_IN_OPTIONS = [
+    # none
+    (AudioInputOptions, {}, []),
 
-#     assert '-r' not in result_args
-#     assert '-vf' not in result_args
+    # format
+    (AudioInputOptions, {'format': 'mp3'}, ['-f', 'mp3']),
+    (AudioInputOptions, {'format': 'wav'}, ['-f', 'wav']),
+    (AudioInputOptions, {'format': 'pcm_s16le'}, ['-f', 'pcm_s16le']),
+
+    # codec
+    (AudioInputOptions, {'codec': 'aac'}, ['-c:a', 'aac']),
+    (AudioInputOptions, {'codec': 'mp3'}, ['-c:a', 'mp3']),
+    (AudioInputOptions, {'codec': 'pcm_s16le'}, ['-c:a', 'pcm_s16le']),
+
+    # start time
+    (AudioInputOptions, {'start_time': 10.5}, ['-ss', '10.500']),
+    (AudioInputOptions, {'start_time': timedelta(minutes=1, seconds=30)}, ['-ss', '00:01:30.000']),
+
+    # duration
+    (AudioInputOptions, {'duration': 5}, ['-t', '5.000']),
+    (AudioInputOptions, {'duration': timedelta(seconds=20)}, ['-t', '00:00:20.000']),
+
+    # number of channels
+    (AudioInputOptions, {'n_channels': 1}, ['-ac', '1']),
+    (AudioInputOptions, {'n_channels': 2}, ['-ac', '2']),
+    (AudioInputOptions, {'n_channels': 6}, ['-ac', '6']),
+
+    # sample rate
+    (AudioInputOptions, {'sample_rate': 44100}, ['-ar', '44100']),
+    (AudioInputOptions, {'sample_rate': 44100.00}, ['-ar', '44100']),
+    (AudioInputOptions, {'sample_rate': '48000'}, ['-ar', '48000']),
+    (AudioInputOptions, {'sample_rate': '44.1k'}, ['-ar', '44100']),
+    (AudioInputOptions, {'sample_rate': '48k'}, ['-ar', '48000']),
+
+    # stream loop
+    (AudioInputOptions, {'stream_loop': -1}, ['-stream_loop', '-1']),
+    (AudioInputOptions, {'stream_loop': 0}, ['-stream_loop', '0']),
+    (AudioInputOptions, {'stream_loop': 5}, ['-stream_loop', '5']),
+
+    # all
+    (AudioInputOptions, 
+        {'format': 's16le', 'n_channels': 2, 'sample_rate': 44100, 'codec': 'pcm_s16le'},
+        ['-f', 's16le', '-c:a', 'pcm_s16le', '-ac', '2', '-ar', '44100'])
+]
 
 
-# # ============================================================= #
-# # ======================== AUDIO TESTS ======================== #
-# # ============================================================= #
+INVALID_AUDIO_IN_OPTIONS = [
+    (AudioInputOptions, {'format': 'mp4'}, []),
+    (AudioInputOptions, {'codec': 'h264'}, []),
+    (AudioInputOptions, {'n_channels': 0}, []),
+    (AudioInputOptions, {'n_channels': -1}, []),
+    (AudioInputOptions, {'sample_rate': 0}, []),
+    (AudioInputOptions, {'sample_rate': -44100}, []),
+    (AudioInputOptions, {'sample_rate': 'batata'}, []),
+    (AudioInputOptions, {'sample_rate': '-48k'}, []),
+    (AudioInputOptions, {'stream_loop': -5}, []),
+]
 
-# @pytest.mark.parametrize(
-#     'codec_class, input_args, expected_output',
-#     [
-#         # Audio Transcoding (AAC with Bitrate)
-#         (AudioFlags, 
-#             {'audio_codec': 'aac', 'bitrate': '128k'},
-#             ['-c:a', 'aac', '-b:a', '128k']),
 
-#         # Audio Copy (No Bitrate)
-#         (AudioFlags, 
-#             {'audio_codec': 'copy', 'bitrate': None},
-#             ['-c:a', 'copy'])
-#     ]
-# )
+@pytest.mark.parametrize('audio_opts, input_args, expected_output', VALID_AUDIO_IN_OPTIONS)
+def test_audio_in_options_parameters(audio_opts, input_args, expected_output):
+    flag_generator = audio_opts(**input_args)
+    flags = flag_generator.generate_command_args()
+    assert flags == expected_output
 
-# def test_audio_command_generation_matches_expected(codec_class, input_args, expected_output):
-#     '''
-#     Do the generated flags, by AudioFlags, match the expected output?
-#     '''
-#     flags = codec_class(**input_args)
+
+@pytest.mark.parametrize('audio_opts, input_args, expected_output', VALID_AUDIO_IN_OPTIONS)
+def test_audio_in_options_logs_nothing_on_valid_input(caplog, audio_opts, input_args, expected_output):
+    caplog.set_level(logging.ERROR, logger='src.interfaces')
+    flag_generator = audio_opts(**input_args)
+    flag_generator.generate_command_args()
+    assert not caplog.text
+
+
+@pytest.mark.parametrize('audio_opts, input_args, expected_output', INVALID_AUDIO_IN_OPTIONS)
+def test_audio_in_options_logs_on_invalid_input(caplog, audio_opts, input_args, expected_output):
+    caplog.set_level(logging.ERROR, logger='src.interfaces')
+    flag_generator = audio_opts(**input_args)
     
-#     result_args = flags.generate_command_args()
+    # Nota: Aqui pegamos a chave do dicionário (ex: 'n_channels')
+    attr_name, value_passed = list(input_args.items())[0]
+    
+    # Se o nome do atributo no init (n_channels) for diferente do nome no log ('channels'),
+    # precisamos ajustar a expectativa. No seu código você loga como 'channels'.
+    if attr_name == 'n_channels':
+        expected_name = 'channels'
+    else:
+        expected_name = attr_name
 
-#     assert result_args == expected_output
+    flag_generator.generate_command_args()
+    
+    expected_msg = f"Invalid value '{value_passed}' received for '{expected_name}' on AudioInputOptions."
+    assert expected_msg in caplog.text
