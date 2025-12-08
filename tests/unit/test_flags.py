@@ -1,7 +1,7 @@
 import pytest
 import logging
 from datetime import timedelta
-from src.flags import GlobalOptions, ImageInputOptions, AudioInputOptions
+from ffmpeg_engine.src.options import GlobalOptions, ImageInputOptions, AudioInputOptions
 
 
 
