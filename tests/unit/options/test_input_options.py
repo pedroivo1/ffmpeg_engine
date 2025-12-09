@@ -4,7 +4,6 @@ from datetime import timedelta
 from pympeg import ImageInputOptions, AudioInputOptions, VideoInputOptions
 
 
-
 VALID_IMAGE_IN_OPTIONS = [
     # none
     (ImageInputOptions, {}, []),
@@ -75,14 +74,11 @@ def test_image_in_flags_logs_on_invalid_input(caplog, image_flags, input_args, e
     caplog.set_level(logging.ERROR, logger='src.interfaces')
     flag_generator = image_flags(**input_args)
     attr_name, value_passed = list(input_args.items())[0]
-
-    flag_generator.generate_command_args()
     expected_msg = f"Invalid value '{value_passed}' received for '{attr_name}' on ImageInputOptions."
 
+    flag_generator.generate_command_args()
+
     assert expected_msg in caplog.text
-
-
-
 
 
 VALID_AUDIO_IN_OPTIONS = [
@@ -133,6 +129,7 @@ VALID_AUDIO_IN_OPTIONS = [
 ]
 
 
+
 INVALID_AUDIO_IN_OPTIONS = [
     (AudioInputOptions, {'format': 'mp4'}, []),
     (AudioInputOptions, {'codec': 'h264'}, []),
@@ -149,7 +146,9 @@ INVALID_AUDIO_IN_OPTIONS = [
 @pytest.mark.parametrize('audio_opts, input_args, expected_output', VALID_AUDIO_IN_OPTIONS)
 def test_audio_in_options_parameters(audio_opts, input_args, expected_output):
     flag_generator = audio_opts(**input_args)
+
     flags = flag_generator.generate_command_args()
+
     assert flags == expected_output
 
 
@@ -157,7 +156,9 @@ def test_audio_in_options_parameters(audio_opts, input_args, expected_output):
 def test_audio_in_options_logs_nothing_on_valid_input(caplog, audio_opts, input_args, expected_output):
     caplog.set_level(logging.ERROR, logger='src.interfaces')
     flag_generator = audio_opts(**input_args)
+
     flag_generator.generate_command_args()
+
     assert not caplog.text
 
 
@@ -165,23 +166,12 @@ def test_audio_in_options_logs_nothing_on_valid_input(caplog, audio_opts, input_
 def test_audio_in_options_logs_on_invalid_input(caplog, audio_opts, input_args, expected_output):
     caplog.set_level(logging.ERROR, logger='src.interfaces')
     flag_generator = audio_opts(**input_args)
-    
-    # Nota: Aqui pegamos a chave do dicionário (ex: 'n_channels')
     attr_name, value_passed = list(input_args.items())[0]
-    
-    # Se o nome do atributo no init (n_channels) for diferente do nome no log ('channels'),
-    # precisamos ajustar a expectativa. No seu código você loga como 'channels'.
-    if attr_name == 'n_channels':
-        expected_name = 'channels'
-    else:
-        expected_name = attr_name
+    expected_msg = f"Invalid value '{value_passed}' received for '{attr_name}' on AudioInputOptions."
 
     flag_generator.generate_command_args()
-    
-    expected_msg = f"Invalid value '{value_passed}' received for '{expected_name}' on AudioInputOptions."
+
     assert expected_msg in caplog.text
-
-
 
 
 
@@ -236,28 +226,17 @@ VALID_VIDEO_IN_OPTIONS = [
 ]
 
 INVALID_VIDEO_IN_OPTIONS = [
-    # Formatos de audio ou imagem inválidos para video neste contexto
     (VideoInputOptions, {'format': 'mp3'}, []), 
     (VideoInputOptions, {'format': 'png'}, []),
-
-    # Codecs inválidos
-    (VideoInputOptions, {'codec': 'aac'}, []), # codec de audio
-    (VideoInputOptions, {'codec': 'h265'}, []), # o nome correto no ffmpeg costuma ser hevc ou libx265 (depende da build, mas validamos pela lista)
-
-    # FPS inválido
+    (VideoInputOptions, {'codec': 'aac'}, []),
+    (VideoInputOptions, {'codec': 'h265'}, []),
     (VideoInputOptions, {'fps': 0}, []),
     (VideoInputOptions, {'fps': -30}, []),
-
-    # Size inválido
-    (VideoInputOptions, {'size': 'batata'}, []), # String aleatória
-    (VideoInputOptions, {'size': '100x'}, []), # Regex incompleto
-    (VideoInputOptions, {'size': 'x100'}, []), # Regex incompleto
-    (VideoInputOptions, {'size': ''}, []), # Vazio
-
-    # Pixel format inválido
+    (VideoInputOptions, {'size': 'batata'}, []),
+    (VideoInputOptions, {'size': '100x'}, []),
+    (VideoInputOptions, {'size': 'x100'}, []),
+    (VideoInputOptions, {'size': ''}, []),
     (VideoInputOptions, {'pixel_format': 'invalid_fmt'}, []),
-
-    # Loop inválido
     (VideoInputOptions, {'stream_loop': -5}, []),
 ]
 
@@ -265,7 +244,9 @@ INVALID_VIDEO_IN_OPTIONS = [
 @pytest.mark.parametrize('video_opts, input_args, expected_output', VALID_VIDEO_IN_OPTIONS)
 def test_video_in_options_parameters(video_opts, input_args, expected_output):
     flag_generator = video_opts(**input_args)
+
     flags = flag_generator.generate_command_args()
+
     assert flags == expected_output
 
 
@@ -273,7 +254,9 @@ def test_video_in_options_parameters(video_opts, input_args, expected_output):
 def test_video_in_options_logs_nothing_on_valid_input(caplog, video_opts, input_args, expected_output):
     caplog.set_level(logging.ERROR, logger='src.interfaces')
     flag_generator = video_opts(**input_args)
+
     flag_generator.generate_command_args()
+
     assert not caplog.text
 
 
@@ -281,10 +264,9 @@ def test_video_in_options_logs_nothing_on_valid_input(caplog, video_opts, input_
 def test_video_in_options_logs_on_invalid_input(caplog, video_opts, input_args, expected_output):
     caplog.set_level(logging.ERROR, logger='src.interfaces')
     flag_generator = video_opts(**input_args)
-    
     attr_name, value_passed = list(input_args.items())[0]
-    
-    flag_generator.generate_command_args()
-    
     expected_msg = f"Invalid value '{value_passed}' received for '{attr_name}' on VideoInputOptions."
+
+    flag_generator.generate_command_args()
+
     assert expected_msg in caplog.text

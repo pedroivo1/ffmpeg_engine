@@ -129,17 +129,14 @@ class AudioInputOptions(Options):
             if isinstance(self.n_channels, int) and self.n_channels > 0:
                 args.extend(["-ac", str(self.n_channels)])
             else:
-                self._log_invalid_value("channels", self.n_channels)
+                self._log_invalid_value("n_channels", self.n_channels)
 
         if self.sample_rate is not None:
             is_valid = False
-            final_value = None  # Variável para guardar o valor limpo (sem .0 ou k)
-            # CASO 1: Numérico (Int ou Float)
-            # Aceita 44100 ou 44100.0
+            final_value = None
             if isinstance(self.sample_rate, (int, float)) and self.sample_rate > 0:
                 is_valid = True
-                final_value = int(self.sample_rate)  # Remove o .0 se for float
-            # CASO 2: String (ex: '48k', '44.1k', '48000')
+                final_value = int(self.sample_rate)
             elif isinstance(self.sample_rate, str):
                 s_val = self.sample_rate.lower().strip()
                 if s_val.endswith("k"):
@@ -147,7 +144,6 @@ class AudioInputOptions(Options):
                         number_part = float(s_val[:-1])
                         if number_part > 0:
                             is_valid = True
-                            # Multiplica por 1000 se tiver 'k' (ex: 44.1k -> 44100)
                             final_value = int(number_part * 1000)
                     except ValueError:
                         pass
@@ -156,7 +152,6 @@ class AudioInputOptions(Options):
                     if val_float > 0:
                         is_valid = True
                         final_value = int(val_float)
-            # --- AÇÃO FINAL ---
             if is_valid and final_value is not None:
                 args.extend(["-ar", str(final_value)])
             else:

@@ -22,78 +22,26 @@ O projeto utiliza 2 padrões de projeto para separar responsabilidades (buscar a
 
 ### 📂 Estrutura do Pacote
 
-A estrutura do projeto segue o padrão `src/` e inclui as pastas de cache ignoradas pelo Git:
-
 ```text
-FFMPEG_ENGINE/
-├── .pytest_cache/     # Cache do Pytest
-├── .ruff_cache/       # Cache de linters (Ruff)
-├── .venv/             # Ambiente Virtual Python
-│
+ffmpeg_engine/
 ├── src/
-│   └── pympeg/        # Pacote principal
-│       ├── data/
-│       │   ├── flags.json
-│       │   └── read_json.py
+│   └── pympeg/
 │       │
-│       ├── options/   # Subpacote para Classes de Opções
+│       ├── options/
 │       │   ├── __init__.py
 │       │   ├── global_options.py
-│       │   ├── input_options.py
-│       │   └── output_options.py
+│       │   └── ...
 │       │
 │       ├── __init__.py
-│       ├── builders.py  # Implementa o Builder
-│       ├── director.py  # Implementa o Director
-│       ├── interfaces.py # Contrato para Estratégias (Strategy)
-│       ├── options.py    # Módulo de Opções/Flags
-│       └── runner.py    # Executa o comando FFmpeg
+│       ├── builders.py
+│       ├── interfaces.py
+│       └── ...
 │
 ├── tests/
-│   ├── integration/
-│   └── unit/
+│   └── unit/...
 │
-├── pyproject.toml
-├── .gitignore
-└── README.md
+└── ...
 ```
-
-
-
-## 🚀 Como Usar
-
-O exemplo a seguir mostra como usar o padrão **Builder** para configurar um *codec* de vídeo e uma *flag* de áudio, e executá-los com o `CommandRunner`.
-
-**Note:** O comando de importação deve usar o nome do pacote, que é `pympeg`.
-
-```python
-from pympeg.builders import VideoCodecBuilder
-from pympeg.runner import CommandRunner
-from pympeg.interfaces import AudioFlags # Assumindo que AudioFlags está em interfaces.py
-
-def main():
-    builder = VideoCodecBuilder()
-
-    # Configurando vídeo (H.265, CRF 30)
-    video_flags = builder.set_codec('libx265').set_crf(30).build()
-    
-    # Configurando áudio (AAC 48k)
-    # A classe AudioFlags representa a Estratégia
-    audio_flags = AudioFlags(audio_codec='aac', bitrate='48k')
-
-    # Caminhos relativos ou absolutos
-    runner = CommandRunner("video_aula_01.mp4", "video_aula_01_otimizado.mp4")
-    runner.add_flags(video_flags)
-    runner.add_flags(audio_flags)
-
-    print("🚀 Iniciando conversão...")
-    runner.run()
-    print("✅ Processo finalizado!")
-
-if __name__ == "__main__":
-    main()
-```
-
 
 ## 📦 Instalação
 

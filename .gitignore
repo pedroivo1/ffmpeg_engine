@@ -10,3 +10,6 @@ pympeg.egg-info/
 # Testing and Static Analysis Caches
 .pytest_cache/
 .ruff_cache/
+
+# Personal
+data/

@@ -6,15 +6,17 @@ from .input_options import (
     VideoInputOptions
 )
 
-# 3. Classes de Output (Placeholder - Prontas para quando você criá-las)
-# from .output_options import (
-#     VideoOutputOptions,
-#     AudioOutputOptions,
-# )
+from .output_options import (
+    ImageOutputOptions,
+    VideoOutputOptions,
+    AudioOutputOptions
+)
 
 __all__ = [
-    "GlobalOptions", 
-    "ImageInputOptions", 
-    "AudioInputOptions", 
-    "VideoInputOptions"
+    'ImageInputOptions',
+    'AudioInputOptions',
+    'VideoInputOptions',
+    'ImageOutputOptions',
+    'VideoOutputOptions',
+    'AudioOutputOptions'
 ]
