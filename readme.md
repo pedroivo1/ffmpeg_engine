@@ -3,14 +3,12 @@
 Uma biblioteca Python para construção e execução de comandos FFmpeg, utilizando dois Design Patterns: [Strategy](https://refactoring.guru/design-patterns/strategy) e [Builder](https://refactoring.guru/design-patterns/builder).
 
 
-
 ## 🎯 Motivação
 
 Usar os comandos FFmpeg dá muita flexibilidade, mas exige muita prática, guardar comandos, lembrar de *flags*, etc.
 Então, por que não fazer um código para me ajudar e aproveitar para treinar uma matéria que acabei de aprender?
 
 Por isso fiz uma mini biblioteca em Python, usando [Design Patterns](https://refactoring.guru/design-patterns), para me ajudar a converter vídeos, áudios e imagens sempre que eu precisar.
-
 
 
 ## 🏗 Arquitetura
@@ -43,12 +41,13 @@ ffmpeg_engine/
 └── ...
 ```
 
+
 ## 📦 Instalação
 
 ### Como Instalar a Biblioteca
 Execute no terminal para clonar o repositório:
 ```bash
-git clone [https://github.com/pedroivo1/ffmpeg_engine.git](https://github.com/pedroivo1/ffmpeg_engine.git)
+git clone https://github.com/pedroivo1/ffmpeg_engine.git
 ```
 
 Em seguida, navegue para o diretório e instale o pacote em modo editável (`-e`), o que também resolve as dependências listadas no `pyproject.toml`:
