@@ -1,81 +1,7 @@
 import pytest
 import logging
 from datetime import timedelta
-from ffmpeg_engine.src.options import GlobalOptions, ImageInputOptions, AudioInputOptions
-
-
-
-VALID_GLOBAL_OPTIONS = [
-    # none
-    (GlobalOptions, {}, []),
-
-    # overwrite only
-    (GlobalOptions, {'overwrite': 'no'}, ['-n']),
-    (GlobalOptions, {'overwrite': 'yes'}, ['-y']),
-
-    # hide_banner only
-    (GlobalOptions, {'hide_banner': 'yes',}, ['-hide_banner']),
-
-    # loglevel only
-    (GlobalOptions, {'loglevel': 'quiet',}, ['-loglevel', 'quiet']),
-    (GlobalOptions, {'loglevel': 'panic',}, ['-loglevel', 'panic']),
-    (GlobalOptions, {'loglevel': 'fatal',}, ['-loglevel', 'fatal']),
-    (GlobalOptions, {'loglevel': 'error',}, ['-loglevel', 'error']),
-    (GlobalOptions, {'loglevel': 'warning',}, ['-loglevel', 'warning']),
-    (GlobalOptions, {'loglevel': 'info',}, ['-loglevel', 'info']),
-    (GlobalOptions, {'loglevel': 'verbose',}, ['-loglevel', 'verbose']),
-    (GlobalOptions, {'loglevel': 'debug',}, ['-loglevel', 'debug']),
-    (GlobalOptions, {'loglevel': 'trace',}, ['-loglevel', 'trace']),
-
-    # stats only
-    (GlobalOptions, {'stats': 'no',}, ['-nostats']),
-    (GlobalOptions, {'stats': 'yes',}, ['-stats']),
-
-    # all
-    (GlobalOptions,
-        {'overwrite': 'no', 'hide_banner': 'yes', 'loglevel': 'warning', 'stats': 'yes'},
-        ['-n', '-hide_banner', '-loglevel', 'warning', '-stats'])
-]
-
-INVALID_GLOBAL_OPTIONS = [
-    (GlobalOptions, {'overwrite': 'talvez'}, []),
-    (GlobalOptions, {'hide_banner': 'maybe'}, []),
-    (GlobalOptions, {'loglevel': 'super_alto'}, []),
-    (GlobalOptions, {'stats': 'as vezes'}, []),
-]
-
-
-@pytest.mark.parametrize('global_flags, input_args, expected_output', VALID_GLOBAL_OPTIONS)
-def test_global_flags_parameters(global_flags, input_args, expected_output):
-    flag_generator = global_flags(**input_args)
-
-    flags = flag_generator.generate_command_args()
-
-    assert flags == expected_output
-
-
-@pytest.mark.parametrize('global_flags, input_args, expected_output', VALID_GLOBAL_OPTIONS)
-def test_global_flags_logs_nothing_on_valid_input(caplog, global_flags, input_args, expected_output):
-    caplog.set_level(logging.ERROR, logger='src.interfaces')
-    flag_generator = global_flags(**input_args)
-
-    flag_generator.generate_command_args()
-
-    assert not caplog.text
-
-
-@pytest.mark.parametrize('global_flags, input_args, expected_output', INVALID_GLOBAL_OPTIONS)
-def test_global_flags_logs_on_invalid_input(caplog, global_flags, input_args, expected_output):
-    caplog.set_level(logging.ERROR, logger='src.interfaces')
-    flag_generator = global_flags(**input_args)
-    attr_name, value_passed = list(input_args.items())[0]
-
-    flag_generator.generate_command_args()
-    expected_msg = f'Invalid value \'{value_passed}\' received for \'{attr_name}\' on GlobalOptions.'
-
-    assert expected_msg in caplog.text
-
-
+from pympeg import ImageInputOptions, AudioInputOptions, VideoInputOptions
 
 
 
@@ -106,15 +32,10 @@ VALID_IMAGE_IN_OPTIONS = [
     (ImageInputOptions, {'framerate': 29.97}, ['-framerate', '29.97']),
     (ImageInputOptions, {'framerate': 0.5}, ['-framerate', '0.5']),
 
-    # fps
-    (ImageInputOptions, {'fps': 29.97}, ['-r', '29.97']),
-    (ImageInputOptions, {'fps': 60}, ['-r', '60']),
-    (ImageInputOptions, {'fps': 120}, ['-r', '120']),
-
     # all
     (ImageInputOptions,
-        {'format': 'image2', 'start_time': 5.5, 'loop': 1, 'framerate': 30, 'fps': 15},
-        ['-f', 'image2', '-ss', '5.500', '-loop', '1', '-framerate', '30', '-r', '15']),
+        {'format': 'image2', 'start_time': 5.5, 'loop': 1, 'framerate': 30},
+        ['-f', 'image2', '-ss', '5.500', '-loop', '1', '-framerate', '30']),
     # all - fps
     (ImageInputOptions,
         {'format': 'v4l2', 'start_time': 0, 'framerate': 60},
@@ -128,9 +49,6 @@ INVALID_IMAGE_IN_OPTIONS = [
     (ImageInputOptions, {'framerate': 0}, []),
     (ImageInputOptions, {'framerate': -10}, []),
     (ImageInputOptions, {'framerate': 'slow'}, []),
-    (ImageInputOptions, {'fps': 0}, []),
-    (ImageInputOptions, {'fps': -5}, []),
-    (ImageInputOptions, {'fps': 'fast'}, []),
 ]
 
 @pytest.mark.parametrize('image_flags, input_args, expected_output', VALID_IMAGE_IN_OPTIONS)
@@ -182,6 +100,8 @@ VALID_AUDIO_IN_OPTIONS = [
     (AudioInputOptions, {'codec': 'pcm_s16le'}, ['-c:a', 'pcm_s16le']),
 
     # start time
+    (AudioInputOptions, {'start_time': 0}, ['-ss', '0.000']),
+    (AudioInputOptions, {'start_time': 0}, ['-ss', '0.000']),
     (AudioInputOptions, {'start_time': 10.5}, ['-ss', '10.500']),
     (AudioInputOptions, {'start_time': timedelta(minutes=1, seconds=30)}, ['-ss', '00:01:30.000']),
 
@@ -259,4 +179,112 @@ def test_audio_in_options_logs_on_invalid_input(caplog, audio_opts, input_args, 
     flag_generator.generate_command_args()
     
     expected_msg = f"Invalid value '{value_passed}' received for '{expected_name}' on AudioInputOptions."
+    assert expected_msg in caplog.text
+
+
+
+
+
+VALID_VIDEO_IN_OPTIONS = [
+    # none
+    (VideoInputOptions, {}, []),
+
+    # format
+    (VideoInputOptions, {'format': 'mp4'}, ['-f', 'mp4']),
+    (VideoInputOptions, {'format': 'rawvideo'}, ['-f', 'rawvideo']),
+    (VideoInputOptions, {'format': 'mov'}, ['-f', 'mov']),
+
+    # codec
+    (VideoInputOptions, {'codec': 'libx264'}, ['-c:v', 'libx264']),
+    (VideoInputOptions, {'codec': 'copy'}, ['-c:v', 'copy']),
+    (VideoInputOptions, {'codec': 'prores'}, ['-c:v', 'prores']),
+
+    # start time
+    (VideoInputOptions, {'start_time': 0}, ['-ss', '0.000']),
+    (VideoInputOptions, {'start_time': 10.5}, ['-ss', '10.500']),
+    (VideoInputOptions, {'start_time': timedelta(seconds=90)}, ['-ss', '00:01:30.000']),
+
+    # duration
+    (VideoInputOptions, {'duration': 10}, ['-t', '10.000']),
+    (VideoInputOptions, {'duration': timedelta(minutes=1)}, ['-t', '00:01:00.000']),
+
+    # fps
+    (VideoInputOptions, {'fps': 24}, ['-r', '24']),
+    (VideoInputOptions, {'fps': 29.97}, ['-r', '29.97']),
+    (VideoInputOptions, {'fps': 60}, ['-r', '60']),
+
+    # size
+    (VideoInputOptions, {'size': '1920x1080'}, ['-s', '1920x1080']),
+    (VideoInputOptions, {'size': '640x480'}, ['-s', '640x480']),
+    (VideoInputOptions, {'size': 'hd720'}, ['-s', 'hd720']),
+    (VideoInputOptions, {'size': 'HD1080'}, ['-s', 'hd1080']),
+    (VideoInputOptions, {'size': '4k'}, ['-s', '4k']),
+    (VideoInputOptions, {'size': 'pal'}, ['-s', 'pal']),
+
+    # pixel format
+    (VideoInputOptions, {'pixel_format': 'yuv420p'}, ['-pix_fmt', 'yuv420p']),
+    (VideoInputOptions, {'pixel_format': 'rgb24'}, ['-pix_fmt', 'rgb24']),
+
+    # stream loop
+    (VideoInputOptions, {'stream_loop': -1}, ['-stream_loop', '-1']),
+    (VideoInputOptions, {'stream_loop': 0}, ['-stream_loop', '0']),
+
+    # all
+    (VideoInputOptions, 
+        {'format': 'mov', 'codec': 'prores', 'fps': 24, 'size': '1920x1080'},
+        ['-f', 'mov', '-c:v', 'prores', '-r', '24', '-s', '1920x1080'])
+]
+
+INVALID_VIDEO_IN_OPTIONS = [
+    # Formatos de audio ou imagem inválidos para video neste contexto
+    (VideoInputOptions, {'format': 'mp3'}, []), 
+    (VideoInputOptions, {'format': 'png'}, []),
+
+    # Codecs inválidos
+    (VideoInputOptions, {'codec': 'aac'}, []), # codec de audio
+    (VideoInputOptions, {'codec': 'h265'}, []), # o nome correto no ffmpeg costuma ser hevc ou libx265 (depende da build, mas validamos pela lista)
+
+    # FPS inválido
+    (VideoInputOptions, {'fps': 0}, []),
+    (VideoInputOptions, {'fps': -30}, []),
+
+    # Size inválido
+    (VideoInputOptions, {'size': 'batata'}, []), # String aleatória
+    (VideoInputOptions, {'size': '100x'}, []), # Regex incompleto
+    (VideoInputOptions, {'size': 'x100'}, []), # Regex incompleto
+    (VideoInputOptions, {'size': ''}, []), # Vazio
+
+    # Pixel format inválido
+    (VideoInputOptions, {'pixel_format': 'invalid_fmt'}, []),
+
+    # Loop inválido
+    (VideoInputOptions, {'stream_loop': -5}, []),
+]
+
+
+@pytest.mark.parametrize('video_opts, input_args, expected_output', VALID_VIDEO_IN_OPTIONS)
+def test_video_in_options_parameters(video_opts, input_args, expected_output):
+    flag_generator = video_opts(**input_args)
+    flags = flag_generator.generate_command_args()
+    assert flags == expected_output
+
+
+@pytest.mark.parametrize('video_opts, input_args, expected_output', VALID_VIDEO_IN_OPTIONS)
+def test_video_in_options_logs_nothing_on_valid_input(caplog, video_opts, input_args, expected_output):
+    caplog.set_level(logging.ERROR, logger='src.interfaces')
+    flag_generator = video_opts(**input_args)
+    flag_generator.generate_command_args()
+    assert not caplog.text
+
+
+@pytest.mark.parametrize('video_opts, input_args, expected_output', INVALID_VIDEO_IN_OPTIONS)
+def test_video_in_options_logs_on_invalid_input(caplog, video_opts, input_args, expected_output):
+    caplog.set_level(logging.ERROR, logger='src.interfaces')
+    flag_generator = video_opts(**input_args)
+    
+    attr_name, value_passed = list(input_args.items())[0]
+    
+    flag_generator.generate_command_args()
+    
+    expected_msg = f"Invalid value '{value_passed}' received for '{attr_name}' on VideoInputOptions."
     assert expected_msg in caplog.text

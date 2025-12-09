@@ -1,3 +1,12 @@
-/.venv/
+# Python Environment
+.venv/
+
+# Python Bytecode
 __pycache__/
+
+# Packaging Metadata
+pympeg.egg-info/
+
+# Testing and Static Analysis Caches
 .pytest_cache/
+.ruff_cache/

@@ -2,7 +2,7 @@
 # from .flags import VideoFlags
 
 # class VideoCodecBuilder:
-#     def __init__(self) -> None: 
+#     def __init__(self) -> None:
 #         self._video_codec = 'libx264'
 #         self._crf = 23
 #         self._preset = 'medium'
