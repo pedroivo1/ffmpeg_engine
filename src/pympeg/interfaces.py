@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import timedelta
 import logging
-from functools import wraps
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -11,6 +10,7 @@ class Options(ABC):
     @abstractmethod
     def generate_command_args(self) -> list:
         pass
+
 
     def time_to_str(self, time, limit) -> str:
         if isinstance(time, timedelta):
@@ -22,23 +22,7 @@ class Options(ABC):
             return f"{time:.3f}"
 
         return None
-    
-    @staticmethod
-    def valida_lista(permitidos, mensage: str = None):
-        def decorador(func):
-            @wraps(func)
-            def wrapper(self, value):
-                if value not in permitidos:
-                    if mensage:
-                        raise ValueError(mensage)
-                    else:
-                        raise ValueError(
-                            f"Valor '{value}' não permitido. "
-                            f"Valores válidos: {sorted(permitidos)}"
-                        )
-                return func(self, value)
-            return wrapper
-        return decorador
+
 
     def _log_invalid_value(self, attr_name: str, value: str | int | float | None):
         class_name = self.__class__.__name__

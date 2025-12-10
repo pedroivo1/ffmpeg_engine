@@ -1,14 +1,16 @@
 from pympeg.interfaces import Options
+from pympeg.utils.validation import validate_choices
 
 
 class GlobalOptions(Options):
 
-    OVERWRITE_VALUES = {"no", "yes"}
+    OVERWRITE_VALUES = {"yes", "no"}
+    HIDE_BANNER_VALUES = {'yes'}
     LOGLEVEL_VALUES = {
         "quiet", "panic", "fatal", "error", "warning", 
         "info", "verbose", "debug", "trace"
     }
-    BOOLEAN_VALUES = {"yes", "no"}
+    STATS_VALUES = {"yes", "no"}
 
 
     def __init__(
@@ -38,7 +40,7 @@ class GlobalOptions(Options):
         return self._overwrite
     
     @overwrite.setter
-    @Options.valida_lista(BOOLEAN_VALUES)
+    @validate_choices(OVERWRITE_VALUES)
     def overwrite(self, value) -> None:
         self._overwrite = value
 
@@ -51,7 +53,7 @@ class GlobalOptions(Options):
         return self._hide_banner
     
     @hide_banner.setter
-    @Options.valida_lista({'yes'})
+    @validate_choices(HIDE_BANNER_VALUES)
     def hide_banner(self, value: str) -> None:
         self._hide_banner = value
 
@@ -64,7 +66,7 @@ class GlobalOptions(Options):
         return self._loglevel
     
     @loglevel.setter
-    @Options.valida_lista(LOGLEVEL_VALUES)
+    @validate_choices(LOGLEVEL_VALUES)
     def loglevel(self, value: str) -> None:
         self._loglevel = value
 
@@ -77,7 +79,7 @@ class GlobalOptions(Options):
         return self._stats
 
     @stats.setter
-    @Options.valida_lista(BOOLEAN_VALUES)
+    @validate_choices(STATS_VALUES)
     def stats(self, value: str) -> None:
         self._stats = value
 
@@ -90,13 +92,10 @@ class GlobalOptions(Options):
 
         if self._overwrite is not None:
             args.append("-y" if self._overwrite == "yes" else "-n")
-
         if self._hide_banner is not None:
             args.append("-hide_banner")
-
         if self._loglevel is not None:
             args.extend(["-loglevel", self._loglevel])
-
         if self._stats is not None:
             args.append("-stats" if self._stats == "yes" else "-nostats")
 
