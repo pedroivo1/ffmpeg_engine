@@ -13,6 +13,7 @@ from .output_options import (
 )
 
 __all__ = [
+    'GlobalOptions',
     'ImageInputOptions',
     'AudioInputOptions',
     'VideoInputOptions',

@@ -1,17 +1,22 @@
-from .options import (GlobalOptions,
-                      ImageInputOptions,
-                      AudioInputOptions,
-                      VideoInputOptions,
-                      ImageOutputOptions,
-                      AudioOutputOptions,
-                      VideoOutputOptions)
+from .interfaces import Options
+
+from .options import (
+    GlobalOptions,
+    ImageInputOptions,
+    AudioInputOptions,
+    VideoInputOptions,
+    ImageOutputOptions,
+    AudioOutputOptions,
+    VideoOutputOptions,
+)
 
 __all__ = [
-    "GlobalOptions", 
-    'ImageInputOptions',
-    'AudioInputOptions',
-    'VideoInputOptions',
-    'ImageOutputOptions',
-    'VideoOutputOptions',
-    'AudioOutputOptions'
+    "Options",
+    "GlobalOptions",
+    "ImageInputOptions",
+    "AudioInputOptions",
+    "VideoInputOptions", 
+    "ImageOutputOptions",
+    "AudioOutputOptions",
+    "VideoOutputOptions",
 ]
