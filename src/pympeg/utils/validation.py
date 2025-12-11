@@ -1,5 +1,6 @@
 from functools import wraps
 from datetime import timedelta
+import re
 
 def validate_choices(choices: list | tuple | set):
     """
@@ -121,5 +122,38 @@ def convert_sample_rate():
                 raise ValueError(f"{func.__name__} must be greater than 0")
             
             return func(self, final_value)
+        return wrapper
+    return decorator
+
+
+def validate_positive_number():
+    """Valida se o número (int ou float) é maior que zero."""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, value):
+            if not isinstance(value, (int, float)):
+                raise TypeError(f"{func.__name__} must be int or float, got {type(value).__name__}")
+            if value <= 0:
+                raise ValueError(f"{func.__name__} must be > 0, got {value}")
+            return func(self, value)
+        return wrapper
+    return decorator
+
+def validate_video_size(aliases: set):
+    """Valida tamanho de vídeo: aceita aliases (ex: 'hd1080') ou formato 'WxH'."""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, value):
+            if not isinstance(value, str) or not value:
+                raise ValueError(f"Size must be a non-empty string.")
+            
+            s_val = value.lower().strip()
+            is_wxh = re.match(r"^\d+x\d+$", s_val)
+            is_alias = s_val in aliases
+
+            if not (is_wxh or is_alias):
+                raise ValueError(f"Invalid size format: '{value}'. Must be 'WxH' or a valid alias.")
+            
+            return func(self, s_val)
         return wrapper
     return decorator

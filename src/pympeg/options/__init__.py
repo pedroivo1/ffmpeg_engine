@@ -4,8 +4,9 @@ from .image_input_options import ImageInputOptions
 from .audio_input_options import AudioInputOptions
 from .video_input_options import VideoInputOptions
 
+from .image_output_options import ImageOutputOptions
+
 from .output_options import (
-    ImageOutputOptions,
     VideoOutputOptions,
     AudioOutputOptions
 )
