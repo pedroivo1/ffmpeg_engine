@@ -1,6 +1,5 @@
 from datetime import timedelta
 from pympeg.interfaces import Options
-# Importe os decorators novos e os existentes
 from pympeg.utils.validation import (
     validate_choices, time_to_string, validate_int, convert_sample_rate,
     validate_number, convert_bitrate, validate_dict, validate_audio_format
@@ -13,7 +12,6 @@ class OutputAudioOptions(Options):
         "opus", "ac3", "eac3", "dts",
         "pcm_s16le", "pcm_s24le", "pcm_f32le"
     }
-
     VALID_CODECS = {
         "mp3", "libmp3lame", "flac", "aac", "libfdk_aac",
         "opus", "libopus", "vorbis", "libvorbis",
@@ -32,14 +30,14 @@ class OutputAudioOptions(Options):
         duration: timedelta | float | int | None = None,
         metadata: dict[str, str] | None = None,
     ) -> None:
-        self._format = None
-        self._codec = None
-        self._bitrate = None
-        self._sample_rate = None
-        self._n_channels = None
-        self._qscale = None
-        self._duration = None
-        self._metadata = None
+        self._format: str | None = None
+        self._codec: str | None = None
+        self._bitrate: str | int | None = None
+        self._sample_rate: int | float | str | None = None
+        self._n_channels: int | None = None
+        self._qscale: int | float | None = None
+        self._duration: timedelta | float | int | None = None
+        self._metadata: dict[str, str] | None = None
 
         if format is not None: self.format = format
         if codec is not None: self.codec = codec
@@ -53,122 +51,98 @@ class OutputAudioOptions(Options):
 
     # ========== PROPERTY: format ==========
     @property
-    def format(self) -> str | None:
-        return self._format
+    def format(self) -> str | None: return self._format
 
     @format.setter
     @validate_audio_format(VALID_FORMATS)
-    def format(self, value: str) -> None:
-        self._format = value
+    def format(self, value: str) -> None: self._format = value
 
     @format.deleter
-    def format(self) -> None:
-        self._format = None
+    def format(self) -> None: self._format = None
 
 
     # ========== PROPERTY: codec ==========
     @property
-    def codec(self) -> str | None:
-        return self._codec
+    def codec(self) -> str | None: return self._codec
 
     @codec.setter
     @validate_choices(VALID_CODECS)
-    def codec(self, value: str) -> None:
-        self._codec = value
+    def codec(self, value: str) -> None: self._codec = value
 
     @codec.deleter
-    def codec(self) -> None:
-        self._codec = None
+    def codec(self) -> None: self._codec = None
 
 
     # ========== PROPERTY: bitrate ==========
     @property
-    def bitrate(self) -> int | None:
-        return self._bitrate
+    def bitrate(self) -> int | None: return self._bitrate
 
     @bitrate.setter
     @convert_bitrate()
-    def bitrate(self, value: str | int) -> None:
-        self._bitrate = value
+    def bitrate(self, value: str | int) -> None: self._bitrate = value
 
     @bitrate.deleter
-    def bitrate(self) -> None:
-        self._bitrate = None
+    def bitrate(self) -> None: self._bitrate = None
 
 
     # ========== PROPERTY: sample_rate ==========
     @property
-    def sample_rate(self) -> int | None:
-        return self._sample_rate
+    def sample_rate(self) -> int | None: return self._sample_rate
 
     @sample_rate.setter
     @convert_sample_rate()
-    def sample_rate(self, value: int | float | str) -> None:
-        self._sample_rate = value
+    def sample_rate(self, value: int | float | str) -> None: self._sample_rate = value
 
     @sample_rate.deleter
-    def sample_rate(self) -> None:
-        self._sample_rate = None
+    def sample_rate(self) -> None: self._sample_rate = None
 
 
     # ========== PROPERTY: n_channels ==========
     @property
-    def n_channels(self) -> int | None:
-        return self._n_channels
+    def n_channels(self) -> int | None: return self._n_channels
 
     @n_channels.setter
     @validate_int(min_value=1)
-    def n_channels(self, value: int) -> None:
-        self._n_channels = value
+    def n_channels(self, value: int) -> None: self._n_channels = value
 
     @n_channels.deleter
-    def n_channels(self) -> None:
-        self._n_channels = None
+    def n_channels(self) -> None: self._n_channels = None
 
 
     # ========== PROPERTY: qscale ==========
     @property
-    def qscale(self) -> int | float | None:
-        return self._qscale
+    def qscale(self) -> int | float | None: return self._qscale
 
     @qscale.setter
     @validate_number(min_value=0)
-    def qscale(self, value: int | float) -> None:
-        self._qscale = value
+    def qscale(self, value: int | float) -> None: self._qscale = value
 
     @qscale.deleter
-    def qscale(self) -> None:
-        self._qscale = None
+    def qscale(self) -> None: self._qscale = None
 
 
     # ========== PROPERTY: duration ==========
     @property
-    def duration(self) -> str | None:
-        return self._duration
+    def duration(self) -> str | None: return self._duration
 
     @duration.setter
     @time_to_string()
-    def duration(self, value: str) -> None:
-        self._duration = value
+    def duration(self, value: str) -> None: self._duration = value
 
     @duration.deleter
-    def duration(self) -> None:
-        self._duration = None
+    def duration(self) -> None: self._duration = None
 
 
     # ========== PROPERTY: metadata ==========
     @property
-    def metadata(self) -> dict | None:
-        return self._metadata
+    def metadata(self) -> dict | None: return self._metadata
 
     @metadata.setter
     @validate_dict()
-    def metadata(self, value: dict) -> None:
-        self._metadata = value
+    def metadata(self, value: dict) -> None: self._metadata = value
 
     @metadata.deleter
-    def metadata(self) -> None:
-        self._metadata = None
+    def metadata(self) -> None: self._metadata = None
 
 
     # ========== MÉTODOS ==========

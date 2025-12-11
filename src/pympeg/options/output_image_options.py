@@ -39,14 +39,14 @@ class ImageOutputOptions(Options):
         pixel_format: str | None = None,
         compression_level: int | None = None,
     ) -> None:
-        self._format = None
-        self._codec = None
-        self._qscale = None
-        self._frames = None
-        self._framerate = None
-        self._size = None
-        self._pixel_format = None
-        self._compression_level = None
+        self._format: str | None = None
+        self._codec: str | None = None
+        self._qscale: int | float | None = None
+        self._frames: int | None = None
+        self._framerate: float | int | None = None
+        self._size: str | None = None
+        self._pixel_format: str | None = None
+        self._compression_level: int | None = None
 
         if format is not None: self.format = format
         if codec is not None: self.codec = codec
@@ -60,123 +60,99 @@ class ImageOutputOptions(Options):
 
     # ========== PROPERTY: format ==========
     @property
-    def format(self) -> str | None:
-        return self._format
+    def format(self) -> str | None: return self._format
 
     @format.setter
     @validate_choices(VALID_FORMATS)
-    def format(self, value: str) -> None:
-        self._format = value
+    def format(self, value: str) -> None: self._format = value
 
     @format.deleter
-    def format(self) -> None:
-        self._format = None
+    def format(self) -> None: self._format = None
 
 
     # ========== PROPERTY: codec ==========
     @property
-    def codec(self) -> str | None:
-        return self._codec
+    def codec(self) -> str | None: return self._codec
 
     @codec.setter
     @validate_choices(VALID_CODECS)
-    def codec(self, value: str) -> None:
-        self._codec = value
+    def codec(self, value: str) -> None: self._codec = value
 
     @codec.deleter
-    def codec(self) -> None:
-        self._codec = None
+    def codec(self) -> None: self._codec = None
 
 
     # ========== PROPERTY: qscale ==========
     @property
-    def qscale(self) -> int | float | None:
-        return self._qscale
+    def qscale(self) -> int | float | None: return self._qscale
 
     @qscale.setter
     @validate_number(min_value=0)
-    def qscale(self, value: int | float) -> None:
-        self._qscale = value
+    def qscale(self, value: int | float) -> None: self._qscale = value
 
     @qscale.deleter
-    def qscale(self) -> None:
-        self._qscale = None
+    def qscale(self) -> None: self._qscale = None
 
 
     # ========== PROPERTY: frames ==========
     @property
-    def frames(self) -> int | None:
-        return self._frames
+    def frames(self) -> int | None: return self._frames
 
     @frames.setter
     @validate_int(min_value=1)
-    def frames(self, value: int) -> None:
-        self._frames = value
+    def frames(self, value: int) -> None: self._frames = value
 
     @frames.deleter
-    def frames(self) -> None:
-        self._frames = None
+    def frames(self) -> None: self._frames = None
 
 
     # ========== PROPERTY: framerate ==========
     @property
-    def framerate(self) -> float | int | None:
-        return self._framerate
+    def framerate(self) -> float | int | None: return self._framerate
 
     @framerate.setter
     # Framerate deve ser estritamente maior que 0
     @validate_number(min_value=0.00001) 
-    def framerate(self, value: float | int) -> None:
-        self._framerate = value
+    def framerate(self, value: float | int) -> None: self._framerate = value
 
     @framerate.deleter
-    def framerate(self) -> None:
-        self._framerate = None
+    def framerate(self) -> None: self._framerate = None
 
 
     # ========== PROPERTY: size ==========
     @property
-    def size(self) -> str | None:
-        return self._size
+    def size(self) -> str | None: return self._size
 
     @size.setter
     @validate_video_size(VALID_SIZES)
-    def size(self, value: str) -> None:
-        self._size = value
+    def size(self, value: str) -> None: self._size = value
 
     @size.deleter
-    def size(self) -> None:
-        self._size = None
+    def size(self) -> None: self._size = None
 
 
     # ========== PROPERTY: pixel_format ==========
     @property
-    def pixel_format(self) -> str | None:
-        return self._pixel_format
+    def pixel_format(self) -> str | None: return self._pixel_format
 
     @pixel_format.setter
     @validate_choices(VALID_PIX_FMTS)
-    def pixel_format(self, value: str) -> None:
-        self._pixel_format = value
+    def pixel_format(self, value: str) -> None: self._pixel_format = value
 
     @pixel_format.deleter
-    def pixel_format(self) -> None:
-        self._pixel_format = None
+    def pixel_format(self) -> None: self._pixel_format = None
 
 
     # ========== PROPERTY: compression_level ==========
     @property
-    def compression_level(self) -> int | None:
-        return self._compression_level
+    def compression_level(self) -> int | None: return self._compression_level
 
     @compression_level.setter
     @validate_int(min_value=0, max_value=100)
-    def compression_level(self, value: int) -> None:
-        self._compression_level = value
+    def compression_level(self, value: int) -> None: self._compression_level = value
 
     @compression_level.deleter
-    def compression_level(self) -> None:
-        self._compression_level = None
+    def compression_level(self) -> None: self._compression_level = None
 
 
     # ========== MÉTODOS ==========
