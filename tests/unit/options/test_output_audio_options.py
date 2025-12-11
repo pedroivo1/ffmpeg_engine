@@ -1,6 +1,6 @@
 import pytest
 from datetime import timedelta
-from pympeg import AudioOutputOptions
+from pympeg import OutputAudioOptions
 
 # Structure: (atributo, valor_input, getter_esperado, args_esperados)
 VALID_AUDIO_OUT_OPTIONS = [
@@ -65,7 +65,7 @@ INVALID_AUDIO_OUT_OPTIONS = [
 
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_AUDIO_OUT_OPTIONS)
 def test_audio_out_setters_valid_storage(attr, input_val, expected_getter, _args):
-    options = AudioOutputOptions()
+    options = OutputAudioOptions()
 
     setattr(options, attr, input_val)
 
@@ -74,7 +74,7 @@ def test_audio_out_setters_valid_storage(attr, input_val, expected_getter, _args
 
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_AUDIO_OUT_OPTIONS)
 def test_audio_out_setters_invalid_raise_error(attr, val_inv, exception_type):
-    options = AudioOutputOptions()
+    options = OutputAudioOptions()
 
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
@@ -85,7 +85,7 @@ def test_audio_out_setters_invalid_raise_error(attr, val_inv, exception_type):
 @pytest.mark.parametrize('attr, input_val, _expected, expected_args', VALID_AUDIO_OUT_OPTIONS)
 def test_audio_out_command_args_generation(attr, input_val, _expected, expected_args):
     input_args = {attr: input_val}
-    options = AudioOutputOptions(**input_args)
+    options = OutputAudioOptions(**input_args)
     flags = options.generate_command_args()
     
     if attr == 'metadata':
@@ -95,7 +95,7 @@ def test_audio_out_command_args_generation(attr, input_val, _expected, expected_
 
 
 def test_audio_out_full_initialization():
-    opts = AudioOutputOptions(
+    opts = OutputAudioOptions(
         format='mp3',
         codec='libmp3lame',
         bitrate='192k',
@@ -113,6 +113,6 @@ def test_audio_out_full_initialization():
 
 
 def test_audio_out_empty_initialization():
-    options = AudioOutputOptions()
+    options = OutputAudioOptions()
     
     assert options.generate_command_args() == []

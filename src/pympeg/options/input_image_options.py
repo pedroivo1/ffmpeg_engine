@@ -3,7 +3,7 @@ from pympeg.interfaces import Options
 from pympeg.utils.validation import validate_choices, time_to_string 
 
 
-class ImageInputOptions(Options):
+class InputImageOptions(Options):
 
     FORMAT_VALUES = {
         "image2", "image2pipe", "png", "gif", "bmp", "tiff", "jpeg",

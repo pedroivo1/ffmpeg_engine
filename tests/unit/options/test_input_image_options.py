@@ -1,6 +1,6 @@
 import pytest
 from datetime import timedelta
-from pympeg import ImageInputOptions
+from pympeg import InputImageOptions
 
 # Structure: (attribute, input_value, expected_getter, expected_args)
 VALID_ATTR_OPTIONS = [
@@ -47,7 +47,7 @@ INVALID_ATTR_OPTIONS = [
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_ATTR_OPTIONS)
 def test_image_setters_valid_storage(attr, input_val, expected_getter, _args):
     '''Tests that valid values are stored correctly (including transformations).'''
-    options = ImageInputOptions()
+    options = InputImageOptions()
     
     setattr(options, attr, input_val)
     
@@ -57,7 +57,7 @@ def test_image_setters_valid_storage(attr, input_val, expected_getter, _args):
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_ATTR_OPTIONS)
 def test_image_setters_invalid_raise_error(attr, val_inv, exception_type):
     '''Tests that invalid values raise the correct Exception type.'''
-    options = ImageInputOptions()
+    options = InputImageOptions()
     
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
@@ -68,7 +68,7 @@ def test_image_setters_invalid_raise_error(attr, val_inv, exception_type):
 @pytest.mark.parametrize('attr, input_val, _expected, _args', VALID_ATTR_OPTIONS)
 def test_image_deleters_functionality(attr, input_val, _expected, _args):
     '''Tests that deleters correctly reset attributes to None.'''
-    options = ImageInputOptions()
+    options = InputImageOptions()
     setattr(options, attr, input_val)
     
     delattr(options, attr)
@@ -80,14 +80,14 @@ def test_image_deleters_functionality(attr, input_val, _expected, _args):
 def test_image_command_args_generation(attr, input_val, _expected, expected_args):
     '''Tests that the correct command line arguments are generated.'''
     input_args = {attr: input_val}
-    options = ImageInputOptions(**input_args)
+    options = InputImageOptions(**input_args)
     
     assert options.generate_command_args() == expected_args
 
 
 def test_image_full_initialization():
     '''Tests initialization with multiple parameters combined.'''
-    opts = ImageInputOptions(
+    opts = InputImageOptions(
         format='png',
         start_time=timedelta(seconds=10),
         loop=1,
@@ -106,5 +106,5 @@ def test_image_full_initialization():
 
 def test_image_empty_initialization():
     '''Tests that initializing with no arguments produces an empty command list.'''
-    options = ImageInputOptions()
+    options = InputImageOptions()
     assert options.generate_command_args() == []

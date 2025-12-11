@@ -6,7 +6,7 @@ from pympeg.utils.validation import (
     validate_number, convert_bitrate, validate_dict, validate_audio_format
 )
 
-class AudioOutputOptions(Options):
+class OutputAudioOptions(Options):
 
     VALID_FORMATS = {
         "mp3", "wav", "flac", "aac", "ogg", "m4a", "aiff",

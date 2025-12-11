@@ -3,7 +3,7 @@ from pympeg.interfaces import Options
 from pympeg.utils.validation import validate_choices, time_to_string, validate_int, convert_sample_rate
 
 
-class AudioInputOptions(Options):
+class InputAudioOptions(Options):
     
     AUDIO_FORMATS = {
         "mp3", "wav", "flac", "aac", "ogg", "m4a", "aiff",

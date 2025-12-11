@@ -1,6 +1,6 @@
 import pytest
 from datetime import timedelta
-from pympeg import AudioInputOptions
+from pympeg import InputAudioOptions
 
 
 # Structure: (attribute, input_value, expected_getter, expected_args)
@@ -61,7 +61,7 @@ INVALID_ATTR_OPTIONS = [
 
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_ATTR_OPTIONS)
 def test_audio_setters_valid_storage(attr, input_val, expected_getter, _args):
-    options = AudioInputOptions()
+    options = InputAudioOptions()
 
     setattr(options, attr, input_val)
 
@@ -70,7 +70,7 @@ def test_audio_setters_valid_storage(attr, input_val, expected_getter, _args):
 
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_ATTR_OPTIONS)
 def test_audio_setters_invalid_raise_error(attr, val_inv, exception_type):
-    options = AudioInputOptions()
+    options = InputAudioOptions()
 
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
@@ -80,7 +80,7 @@ def test_audio_setters_invalid_raise_error(attr, val_inv, exception_type):
 
 @pytest.mark.parametrize('attr, input_val, _expected, _args', VALID_ATTR_OPTIONS)
 def test_audio_deleters_functionality(attr, input_val, _expected, _args):
-    options = AudioInputOptions()
+    options = InputAudioOptions()
     setattr(options, attr, input_val)
     
     delattr(options, attr)
@@ -91,7 +91,7 @@ def test_audio_deleters_functionality(attr, input_val, _expected, _args):
 @pytest.mark.parametrize('attr, input_val, _expected, expected_args', VALID_ATTR_OPTIONS)
 def test_audio_command_args_generation(attr, input_val, _expected, expected_args):
     input_args = {attr: input_val}
-    options = AudioInputOptions(**input_args)
+    options = InputAudioOptions(**input_args)
     
     flags = options.generate_command_args()
 
@@ -99,7 +99,7 @@ def test_audio_command_args_generation(attr, input_val, _expected, expected_args
 
 
 def test_audio_full_initialization():
-    opts = AudioInputOptions(
+    opts = InputAudioOptions(
         format='s16le',
         codec='pcm_s16le',
         n_channels=2,
@@ -116,6 +116,6 @@ def test_audio_full_initialization():
 
 
 def test_audio_empty_initialization():
-    options = AudioInputOptions()
+    options = InputAudioOptions()
     
     assert options.generate_command_args() == []
