@@ -26,3 +26,6 @@ test-image-out-options:
 
 test-audio-out-options:
 	python -m pytest .\tests\unit\options\test_audio_output_options.py
+
+test-video-out-options:
+	python -m pytest .\tests\unit\options\test_video_output_options.py

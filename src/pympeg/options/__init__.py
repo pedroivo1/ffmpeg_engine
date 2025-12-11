@@ -6,10 +6,7 @@ from .video_input_options import VideoInputOptions
 
 from .image_output_options import ImageOutputOptions
 from .audio_output_options import AudioOutputOptions
-
-from .output_options import (
-    VideoOutputOptions,
-)
+from .video_output_options import VideoOutputOptions
 
 __all__ = [
     'GlobalOptions',
