@@ -184,3 +184,71 @@ def validate_number(min_value: float | int | None = None, max_value: float | int
             return func(self, value)
         return wrapper
     return decorator
+
+
+def convert_bitrate():
+    """
+    Converte bitrates (str/int/float) para inteiro (bits/s).
+    Suporta sufixos 'k' (x1000) e 'm' (x1000000).
+    Ex: '128k' -> 128000, '1.5m' -> 1500000
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, value):
+            if not isinstance(value, (int, float, str)):
+                raise TypeError(f"Bitrate must be int, float or str, got {type(value).__name__}")
+            
+            final_value = None
+            try:
+                if isinstance(value, (int, float)):
+                    final_value = int(value)
+                else:
+                    s_val = value.lower().strip()
+                    multiplier = 1
+                    if s_val.endswith("k"):
+                        multiplier = 1000
+                        s_val = s_val[:-1]
+                    elif s_val.endswith("m"):
+                        multiplier = 1000000
+                        s_val = s_val[:-1]
+                    
+                    final_value = int(float(s_val) * multiplier)
+            except ValueError:
+                raise ValueError(f"Invalid bitrate format: '{value}'")
+
+            if final_value <= 0:
+                raise ValueError("Bitrate must be positive")
+            
+            return func(self, final_value)
+        return wrapper
+    return decorator
+
+
+def validate_dict():
+    """Garante que o valor é um dicionário."""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, value):
+            if not isinstance(value, dict):
+                raise TypeError(f"{func.__name__} must be a dict, got {type(value).__name__}")
+            return func(self, value)
+        return wrapper
+    return decorator
+
+
+def validate_audio_format(valid_choices: set):
+    """
+    Valida formato de áudio. 
+    Aceita se estiver na lista OU se começar com 'pcm' (ex: pcm_s16le).
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, value):
+            if value not in valid_choices and not value.startswith("pcm"):
+                raise ValueError(
+                    f"Value '{value}' is not allowed. "
+                    f"Must be in {valid_choices} or start with 'pcm'"
+                )
+            return func(self, value)
+        return wrapper
+    return decorator

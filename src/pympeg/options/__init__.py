@@ -5,10 +5,10 @@ from .audio_input_options import AudioInputOptions
 from .video_input_options import VideoInputOptions
 
 from .image_output_options import ImageOutputOptions
+from .audio_output_options import AudioOutputOptions
 
 from .output_options import (
     VideoOutputOptions,
-    AudioOutputOptions
 )
 
 __all__ = [

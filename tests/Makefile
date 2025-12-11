@@ -21,5 +21,8 @@ test-audio-in-options:
 test-video-in-options:
 	python -m pytest .\tests\unit\options\test_video_input_options.py
 
-test-imagem-out-options:
+test-image-out-options:
 	python -m pytest .\tests\unit\options\test_image_output_options.py
+
+test-audio-out-options:
+	python -m pytest .\tests\unit\options\test_audio_output_options.py
