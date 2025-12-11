@@ -1,22 +1,24 @@
-from .interfaces import Options
+from .runner import FFmpegRunner
+from .builders import FFmpegBuilder
 
 from .options import (
     GlobalOptions,
     InputImageOptions,
     InputAudioOptions,
-    VideoInputOptions,
-    ImageOutputOptions,
+    InputVideoOptions,
+    OutputImageOptions,
     OutputAudioOptions,
-    VideoOutputOptions,
+    OutputVideoOptions,
 )
 
 __all__ = [
-    "Options",
-    "GlobalOptions",
-    "InputImageOptions",
-    "InputAudioOptions",
-    "VideoInputOptions", 
-    "ImageOutputOptions",
-    "OutputAudioOptions",
-    "VideoOutputOptions",
+    'FFmpegRunner',
+    'FFmpegBuilder',
+    'GlobalOptions',
+    'InputImageOptions',
+    'InputAudioOptions',
+    'InputVideoOptions', 
+    'OutputImageOptions',
+    'OutputAudioOptions',
+    'OutputVideoOptions',
 ]

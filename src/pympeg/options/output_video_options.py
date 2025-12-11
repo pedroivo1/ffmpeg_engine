@@ -6,46 +6,46 @@ from pympeg.utils.validation import (
     convert_bitrate, validate_dict, validate_number
 )
 
-class VideoOutputOptions(Options):
+class OutputVideoOptions(Options):
 
     VALID_FORMATS = {
-        "mp4", "avi", "mov", "mkv", "webm", "flv", "mpeg", "3gp", 
-        "ts", "ogv", "asf", "wmv", "gif", "matroska", "m4v"
+        'mp4', 'avi', 'mov', 'mkv', 'webm', 'flv', 'mpeg', '3gp', 
+        'ts', 'ogv', 'asf', 'wmv', 'gif', 'matroska', 'm4v'
     }
     VALID_VIDEO_CODECS = {
-        "libx264", "h264", "libx265", "hevc", "vp9", "libvpx-vp9", 
-        "vp8", "libvpx", "mpeg4", "mpeg2video", "prores", "dnxhd", 
-        "ffv1", "copy", "mjpeg", "h264_nvenc", "hevc_nvenc", 
-        "av1", "libaom-av1"
+        'libx264', 'h264', 'libx265', 'hevc', 'vp9', 'libvpx-vp9', 
+        'vp8', 'libvpx', 'mpeg4', 'mpeg2video', 'prores', 'dnxhd', 
+        'ffv1', 'copy', 'mjpeg', 'h264_nvenc', 'hevc_nvenc', 
+        'av1', 'libaom-av1'
     }
     VALID_AUDIO_CODECS = {
-        "aac", "libfdk_aac", "mp3", "libmp3lame", "opus", "libopus", 
-        "vorbis", "libvorbis", "flac", "pcm_s16le", "copy", "ac3", "eac3"
+        'aac', 'libfdk_aac', 'mp3', 'libmp3lame', 'opus', 'libopus', 
+        'vorbis', 'libvorbis', 'flac', 'pcm_s16le', 'copy', 'ac3', 'eac3'
     }
     VALID_PIX_FMTS = {
-        "yuv420p", "yuv422p", "yuv444p", "rgb24", "bgr24", 
-        "rgba", "bgra", "gray", "monow", "monob", 
-        "yuyv422", "nv12", "nv21", "p010le", "p010be"
+        'yuv420p', 'yuv422p', 'yuv444p', 'rgb24', 'bgr24', 
+        'rgba', 'bgra', 'gray', 'monow', 'monob', 
+        'yuyv422', 'nv12', 'nv21', 'p010le', 'p010be'
     }
     VALID_SIZES = {
-        "sqcif", "qcif", "cif", "4cif", "16cif", "qqvga", "qvga", "vga", 
-        "svga", "xga", "uxga", "qxga", "sxga", "qsxga", "qzxga", "wsxga", 
-        "wuxga", "woxga", "wqsxga", "wquxga", "whsxfga", "hsxga", "cga", 
-        "ega", "hd480", "hd720", "hd1080", "uhd2160", "8k", "ntsc", "pal", 
-        "qntsc", "qpal", "sntsc", "spal", "film", "ntsc-film", "2k", 
-        "2kflat", "2kscope", "4k", "4kflat", "4kscope"
+        'sqcif', 'qcif', 'cif', '4cif', '16cif', 'qqvga', 'qvga', 'vga', 
+        'svga', 'xga', 'uxga', 'qxga', 'sxga', 'qsxga', 'qzxga', 'wsxga', 
+        'wuxga', 'woxga', 'wqsxga', 'wquxga', 'whsxfga', 'hsxga', 'cga', 
+        'ega', 'hd480', 'hd720', 'hd1080', 'uhd2160', '8k', 'ntsc', 'pal', 
+        'qntsc', 'qpal', 'sntsc', 'spal', 'film', 'ntsc-film', '2k', 
+        '2kflat', '2kscope', '4k', '4kflat', '4kscope'
     }
     VALID_PRESETS = {
-        "ultrafast", "superfast", "veryfast", "faster", "fast", 
-        "medium", "slow", "slower", "veryslow", "placebo"
+        'ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 
+        'medium', 'slow', 'slower', 'veryslow', 'placebo'
     }
     VALID_MOVFLAGS = {
-        "faststart", "frag_keyframe", "empty_moov", "default_base_moof", 
-        "dash", "frag_custom", "separate_moof", "frag_every_frame"
+        'faststart', 'frag_keyframe', 'empty_moov', 'default_base_moof', 
+        'dash', 'frag_custom', 'separate_moof', 'frag_every_frame'
     }
     VALID_TUNES = {
-        "film", "animation", "grain", "stillimage", "fastdecode", 
-        "zerolatency", "psnr", "ssim"
+        'film', 'animation', 'grain', 'stillimage', 'fastdecode', 
+        'zerolatency', 'psnr', 'ssim'
     }
 
     def __init__(
@@ -268,47 +268,47 @@ class VideoOutputOptions(Options):
     def generate_command_args(self) -> list:
         args = []
         if self._format is not None:
-            args.extend(["-f", self._format])
+            args.extend(['-f', self._format])
         
         if self._video_codec is not None:
-            args.extend(["-c:v", self._video_codec])
+            args.extend(['-c:v', self._video_codec])
         
         if self._audio_codec is not None:
-            args.extend(["-c:a", self._audio_codec])
+            args.extend(['-c:a', self._audio_codec])
         
         if self._bitrate is not None:
-            args.extend(["-b:v", str(self._bitrate)])
+            args.extend(['-b:v', str(self._bitrate)])
         
         if self._fps is not None:
-            args.extend(["-r", str(self._fps)])
+            args.extend(['-r', str(self._fps)])
         
         if self._size is not None:
-            args.extend(["-s", self._size])
+            args.extend(['-s', self._size])
         
         if self._pixel_format is not None:
-            args.extend(["-pix_fmt", self._pixel_format])
+            args.extend(['-pix_fmt', self._pixel_format])
         
         if self._qscale is not None:
-            args.extend(["-qscale:v", str(self._qscale)])
+            args.extend(['-qscale:v', str(self._qscale)])
         
         if self._duration is not None:
-            args.extend(["-t", self._duration])
+            args.extend(['-t', self._duration])
         
         if self._preset is not None:
-            args.extend(["-preset", self._preset])
+            args.extend(['-preset', self._preset])
         
         if self._crf is not None:
-            args.extend(["-crf", str(self._crf)])
+            args.extend(['-crf', str(self._crf)])
         
         if self._metadata:
             for key, value in self._metadata.items():
                 if key and value:
-                    args.extend(["-metadata", f"{key}={value}"])
+                    args.extend(['-metadata', f'{key}={value}'])
         
         if self._movflags:
-            args.extend(["-movflags", self._movflags])
+            args.extend(['-movflags', self._movflags])
 
         if self._tune:
-            args.extend(["-tune", self._tune])
+            args.extend(['-tune', self._tune])
 
         return args

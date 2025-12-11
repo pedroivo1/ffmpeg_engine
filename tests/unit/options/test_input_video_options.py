@@ -1,6 +1,6 @@
 import pytest
 from datetime import timedelta
-from pympeg import VideoInputOptions
+from pympeg import InputVideoOptions
 
 
 # Structure: (atributo, valor_input, getter_esperado, args_esperados)
@@ -54,7 +54,7 @@ INVALID_VIDEO_OPTIONS = [
 
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_VIDEO_OPTIONS)
 def test_video_setters_valid_storage(attr, input_val, expected_getter, _args):
-    options = VideoInputOptions()
+    options = InputVideoOptions()
 
     setattr(options, attr, input_val)
 
@@ -63,7 +63,7 @@ def test_video_setters_valid_storage(attr, input_val, expected_getter, _args):
 
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_VIDEO_OPTIONS)
 def test_video_setters_invalid_raise_error(attr, val_inv, exception_type):
-    options = VideoInputOptions()
+    options = InputVideoOptions()
 
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
@@ -74,7 +74,7 @@ def test_video_setters_invalid_raise_error(attr, val_inv, exception_type):
 @pytest.mark.parametrize('attr, input_val, _expected, expected_args', VALID_VIDEO_OPTIONS)
 def test_video_command_args_generation(attr, input_val, _expected, expected_args):
     input_args = {attr: input_val}
-    options = VideoInputOptions(**input_args)
+    options = InputVideoOptions(**input_args)
 
     flags = options.generate_command_args()
 
@@ -82,7 +82,7 @@ def test_video_command_args_generation(attr, input_val, _expected, expected_args
 
 
 def test_video_full_initialization():
-    opts = VideoInputOptions(
+    opts = InputVideoOptions(
         format='mov',
         codec='prores',
         fps=24,
@@ -94,5 +94,5 @@ def test_video_full_initialization():
 
 
 def test_video_empty_initialization():
-    options = VideoInputOptions()
+    options = InputVideoOptions()
     assert options.generate_command_args() == []

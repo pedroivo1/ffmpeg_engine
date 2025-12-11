@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from datetime import timedelta
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,36 +11,16 @@ class Options(ABC):
         pass
 
 
-    def time_to_str(self, time, limit) -> str:
-        if isinstance(time, timedelta):
-            total_seconds = time.total_seconds()
-            H, R = divmod(total_seconds, 3600)
-            M, S = divmod(R, 60)
-            return f"{int(H):02}:{int(M):02}:{S:06.3f}"
-        elif isinstance(time, (float, int)) and time >= limit:
-            return f"{time:.3f}"
-
-        return None
-
-
-    def _log_invalid_value(self, attr_name: str, value: str | int | float | None):
-        class_name = self.__class__.__name__
-        logger.error(
-            f"Invalid value '{value}' received for '{attr_name}' on {class_name}."
-        )
-
-
-
 
 # def conflicts_with(other_param: str):
-#     """Valida se dois parâmetros não estão definidos simultaneamente"""
+#     '''Valida se dois parâmetros não estão definidos simultaneamente'''
 #     def decorator(func):
 #         def wrapper(self, value):
 #             other_value = getattr(self, other_param, None)
 #             if other_value is not None:
 #                 raise ValueError(
-#                     f"Conflito: não pode definir {func.__name__} "
-#                     f"quando {other_param}={other_value} já está definido"
+#                     f'Conflito: não pode definir {func.__name__} '
+#                     f'quando {other_param}={other_value} já está definido'
 #                 )
 #             return func(self, value)
 #         return wrapper

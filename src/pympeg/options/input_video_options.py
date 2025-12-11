@@ -5,27 +5,27 @@ from pympeg.utils.validation import (
     validate_positive_number, validate_video_size
 )
 
-class VideoInputOptions(Options):
+class InputVideoOptions(Options):
 
     VALID_FORMATS = {
-        "mp4", "avi", "mov", "mkv", "webm", "flv", "mpeg", "3gp", 
-        "ts", "ogv", "asf", "wmv", "rawvideo", "yuv4mpegpipe"
+        'mp4', 'avi', 'mov', 'mkv', 'webm', 'flv', 'mpeg', '3gp', 
+        'ts', 'ogv', 'asf', 'wmv', 'rawvideo', 'yuv4mpegpipe'
     }
     VALID_CODECS = {
-        "libx264", "h264", "libx265", "hevc", "vp9", "vp8", "mpeg4", 
-        "mpeg2video", "prores", "dnxhd", "ffv1", "rawvideo", "copy", "mjpeg"
+        'libx264', 'h264', 'libx265', 'hevc', 'vp9', 'vp8', 'mpeg4', 
+        'mpeg2video', 'prores', 'dnxhd', 'ffv1', 'rawvideo', 'copy', 'mjpeg'
     }
     VALID_PIX_FMTS = {
-        "yuv420p", "yuv422p", "yuv444p", "rgb24", "bgr24", 
-        "gray", "monow", "monob", "yuyv422"
+        'yuv420p', 'yuv422p', 'yuv444p', 'rgb24', 'bgr24', 
+        'gray', 'monow', 'monob', 'yuyv422'
     }
     VALID_SIZES = {
-        "sqcif", "qcif", "cif", "4cif", "16cif", "qqvga", "qvga", "vga", 
-        "svga", "xga", "uxga", "qxga", "sxga", "qsxga", "qzxga", "wsxga", 
-        "wuxga", "woxga", "wqsxga", "wquxga", "whsxfga", "hsxga", "cga", 
-        "ega", "hd480", "hd720", "hd1080", "uhd2160", "8k", "ntsc", "pal", 
-        "qntsc", "qpal", "sntsc", "spal", "film", "ntsc-film", "2k", 
-        "2kflat", "2kscope", "4k", "4kflat", "4kscope"
+        'sqcif', 'qcif', 'cif', '4cif', '16cif', 'qqvga', 'qvga', 'vga', 
+        'svga', 'xga', 'uxga', 'qxga', 'sxga', 'qsxga', 'qzxga', 'wsxga', 
+        'wuxga', 'woxga', 'wqsxga', 'wquxga', 'whsxfga', 'hsxga', 'cga', 
+        'ega', 'hd480', 'hd720', 'hd1080', 'uhd2160', '8k', 'ntsc', 'pal', 
+        'qntsc', 'qpal', 'sntsc', 'spal', 'film', 'ntsc-film', '2k', 
+        '2kflat', '2kscope', '4k', '4kflat', '4kscope'
     }
 
 
@@ -160,27 +160,27 @@ class VideoInputOptions(Options):
         args = []
 
         if self._format:
-            args.extend(["-f", self._format])
+            args.extend(['-f', self._format])
 
         if self._codec:
-            args.extend(["-c:v", self._codec])
+            args.extend(['-c:v', self._codec])
 
         if self._start_time:
-            args.extend(["-ss", self._start_time])
+            args.extend(['-ss', self._start_time])
 
         if self._duration:
-            args.extend(["-t", self._duration])
+            args.extend(['-t', self._duration])
 
         if self._fps:
-            args.extend(["-r", str(self._fps)])
+            args.extend(['-r', str(self._fps)])
 
         if self._size:
-            args.extend(["-s", self._size])
+            args.extend(['-s', self._size])
 
         if self._pixel_format:
-            args.extend(["-pix_fmt", self._pixel_format])
+            args.extend(['-pix_fmt', self._pixel_format])
 
         if self._stream_loop is not None:
-            args.extend(["-stream_loop", str(self._stream_loop)])
+            args.extend(['-stream_loop', str(self._stream_loop)])
 
         return args

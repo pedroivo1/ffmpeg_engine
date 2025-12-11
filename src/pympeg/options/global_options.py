@@ -7,8 +7,8 @@ class GlobalOptions(Options):
     OVERWRITE_VALUES = {True, False}
     HIDE_BANNER_VALUES = {True}
     LOGLEVEL_VALUES = {
-        "quiet", "panic", "fatal", "error", "warning", 
-        "info", "verbose", "debug", "trace"
+        'quiet', 'panic', 'fatal', 'error', 'warning', 
+        'info', 'verbose', 'debug', 'trace'
     }
     STATS_VALUES = {True, False}
 
@@ -84,16 +84,16 @@ class GlobalOptions(Options):
             args = []
 
             if self._overwrite is not None:
-                args.append("-y" if self._overwrite else "-n")
+                args.append('-y' if self._overwrite else '-n')
             
             if self._hide_banner is not None:
                 if self._hide_banner: 
-                    args.append("-hide_banner")
+                    args.append('-hide_banner')
 
             if self._loglevel is not None:
-                args.extend(["-loglevel", self._loglevel])
+                args.extend(['-loglevel', self._loglevel])
 
             if self._stats is not None:
-                args.append("-stats" if self._stats else "-nostats")
+                args.append('-stats' if self._stats else '-nostats')
 
             return args

@@ -12,4 +12,4 @@ pympeg.egg-info/
 .ruff_cache/
 
 # Personal
-data/
+.data/

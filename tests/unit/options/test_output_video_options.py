@@ -1,6 +1,6 @@
 import pytest
 from datetime import timedelta
-from pympeg import VideoOutputOptions
+from pympeg import OutputVideoOptions
 
 # Estrutura: (atributo, valor_input, getter_esperado, args_esperados)
 VALID_VIDEO_OUT_OPTIONS = [
@@ -93,14 +93,14 @@ INVALID_VIDEO_OUT_OPTIONS = [
 
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_VIDEO_OUT_OPTIONS)
 def test_video_out_setters_valid_storage(attr, input_val, expected_getter, _args):
-    options = VideoOutputOptions()
+    options = OutputVideoOptions()
     setattr(options, attr, input_val)
     assert getattr(options, attr) == expected_getter
 
 
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_VIDEO_OUT_OPTIONS)
 def test_video_out_setters_invalid_raise_error(attr, val_inv, exception_type):
-    options = VideoOutputOptions()
+    options = OutputVideoOptions()
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
     assert getattr(options, attr) is None
@@ -109,13 +109,13 @@ def test_video_out_setters_invalid_raise_error(attr, val_inv, exception_type):
 @pytest.mark.parametrize('attr, input_val, _expected, expected_args', VALID_VIDEO_OUT_OPTIONS)
 def test_video_out_command_args_generation(attr, input_val, _expected, expected_args):
     input_args = {attr: input_val}
-    options = VideoOutputOptions(**input_args)
+    options = OutputVideoOptions(**input_args)
     flags = options.generate_command_args()
     assert flags == expected_args
 
 
 def test_video_out_full_initialization():
-    opts = VideoOutputOptions(
+    opts = OutputVideoOptions(
         format='mp4',
         video_codec='libx264',
         audio_codec='aac',
@@ -135,6 +135,6 @@ def test_video_out_full_initialization():
 
 
 def test_video_out_empty_initialization():
-    options = VideoOutputOptions()
+    options = OutputVideoOptions()
 
     assert options.generate_command_args() == []

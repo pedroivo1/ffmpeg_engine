@@ -6,8 +6,8 @@ from pympeg.utils.validation import validate_choices, time_to_string, validate_p
 class InputImageOptions(Options):
 
     FORMAT_VALUES = {
-        "image2", "image2pipe", "png", "gif", "bmp", "tiff", "jpeg",
-        "webp", "avif", "v4l2", "dshow", "mjpeg"
+        'image2', 'image2pipe', 'png', 'gif', 'bmp', 'tiff', 'jpeg',
+        'webp', 'avif', 'v4l2', 'dshow', 'mjpeg'
     }
     LOOP_VALUES = {-1, 0, 1}
 
@@ -83,15 +83,15 @@ class InputImageOptions(Options):
         args = []
 
         if self._format is not None:
-            args.extend(["-f", self._format])
+            args.extend(['-f', self._format])
 
         if self._start_time is not None:
-            args.extend(["-ss", self._start_time])
+            args.extend(['-ss', self._start_time])
 
         if self._loop is not None:
-            args.extend(["-loop", str(self._loop)])
+            args.extend(['-loop', str(self._loop)])
 
         if self._framerate is not None:
-            args.extend(["-framerate", str(self._framerate)])
+            args.extend(['-framerate', str(self._framerate)])
 
         return args

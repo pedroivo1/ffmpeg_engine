@@ -8,11 +8,11 @@ from pympeg.utils.validation import (
 class InputAudioOptions(Options):
     
     AUDIO_FORMATS = {
-        "mp3", "wav", "flac", "aac", "ogg", "m4a", "aiff",
-        "s16le", "f32be", "pcm_s16le", "alsa", "pulse"
+        'mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'aiff',
+        's16le', 'f32be', 'pcm_s16le', 'alsa', 'pulse'
     }
     AUDIO_CODECS = {
-        "mp3", "flac", "aac", "s16le", "f32be", "pcm_s16le"
+        'mp3', 'flac', 'aac', 's16le', 'f32be', 'pcm_s16le'
     }
 
     def __init__(
@@ -131,24 +131,24 @@ class InputAudioOptions(Options):
         args = []
 
         if self._format is not None:
-            args.extend(["-f", self._format])
+            args.extend(['-f', self._format])
 
         if self._codec is not None:
-            args.extend(["-c:a", self._codec])
+            args.extend(['-c:a', self._codec])
 
         if self._start_time is not None:
-            args.extend(["-ss", self._start_time])
+            args.extend(['-ss', self._start_time])
 
         if self._duration is not None:
-            args.extend(["-t", self._duration])
+            args.extend(['-t', self._duration])
 
         if self._n_channels is not None:
-            args.extend(["-ac", str(self._n_channels)])
+            args.extend(['-ac', str(self._n_channels)])
 
         if self._sample_rate is not None:
-            args.extend(["-ar", str(self._sample_rate)])
+            args.extend(['-ar', str(self._sample_rate)])
 
         if self._stream_loop is not None:
-            args.extend(["-stream_loop", str(self._stream_loop)])
+            args.extend(['-stream_loop', str(self._stream_loop)])
 
         return args

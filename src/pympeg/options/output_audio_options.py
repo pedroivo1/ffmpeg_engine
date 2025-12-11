@@ -8,15 +8,15 @@ from pympeg.utils.validation import (
 class OutputAudioOptions(Options):
 
     VALID_FORMATS = {
-        "mp3", "wav", "flac", "aac", "ogg", "m4a", "aiff",
-        "opus", "ac3", "eac3", "dts",
-        "pcm_s16le", "pcm_s24le", "pcm_f32le"
+        'mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'aiff',
+        'opus', 'ac3', 'eac3', 'dts',
+        'pcm_s16le', 'pcm_s24le', 'pcm_f32le'
     }
     VALID_CODECS = {
-        "mp3", "libmp3lame", "flac", "aac", "libfdk_aac",
-        "opus", "libopus", "vorbis", "libvorbis",
-        "pcm_s16le", "pcm_s24le", "pcm_f32le",
-        "ac3", "eac3", "dts", "copy"
+        'mp3', 'libmp3lame', 'flac', 'aac', 'libfdk_aac',
+        'opus', 'libopus', 'vorbis', 'libvorbis',
+        'pcm_s16le', 'pcm_s24le', 'pcm_f32le',
+        'ac3', 'eac3', 'dts', 'copy'
     }
 
     def __init__(
@@ -150,29 +150,29 @@ class OutputAudioOptions(Options):
         args = []
 
         if self._format:
-            args.extend(["-f", self._format])
+            args.extend(['-f', self._format])
 
         if self._codec:
-            args.extend(["-c:a", self._codec])
+            args.extend(['-c:a', self._codec])
 
         if self._bitrate:
-            args.extend(["-b:a", str(self._bitrate)])
+            args.extend(['-b:a', str(self._bitrate)])
 
         if self._sample_rate:
-            args.extend(["-ar", str(self._sample_rate)])
+            args.extend(['-ar', str(self._sample_rate)])
 
         if self._n_channels:
-            args.extend(["-ac", str(self._n_channels)])
+            args.extend(['-ac', str(self._n_channels)])
 
         if self._qscale is not None:
-            args.extend(["-qscale:a", str(self._qscale)])
+            args.extend(['-qscale:a', str(self._qscale)])
 
         if self._duration:
-            args.extend(["-t", self._duration])
+            args.extend(['-t', self._duration])
 
         if self._metadata:
             for key, value in self._metadata.items():
                 if key and value:
-                    args.extend(["-metadata", f"{key}={value}"])
+                    args.extend(['-metadata', f'{key}={value}'])
 
         return args

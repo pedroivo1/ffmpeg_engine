@@ -4,28 +4,28 @@ from pympeg.utils.validation import (
     validate_number
 )
 
-class ImageOutputOptions(Options):
+class OutputImageOptions(Options):
 
     VALID_FORMATS = {
-        "image2", "image2pipe", "png", "jpeg", "jpg", "gif", 
-        "bmp", "tiff", "webp", "avif", "heif"
+        'image2', 'image2pipe', 'png', 'jpeg', 'jpg', 'gif', 
+        'bmp', 'tiff', 'webp', 'avif', 'heif'
     }
     VALID_CODECS = {
-        "png", "mjpeg", "libwebp", "av1", "hevc", "libx264", 
-        "gif", "bmp", "tiff", "copy"
+        'png', 'mjpeg', 'libwebp', 'av1', 'hevc', 'libx264', 
+        'gif', 'bmp', 'tiff', 'copy'
     }
     VALID_PIX_FMTS = {
-        "yuv420p", "yuv422p", "yuv444p", "rgb24", "bgr24", 
-        "rgba", "bgra", "gray", "monow", "monob", 
-        "yuyv422", "pal8"
+        'yuv420p', 'yuv422p', 'yuv444p', 'rgb24', 'bgr24', 
+        'rgba', 'bgra', 'gray', 'monow', 'monob', 
+        'yuyv422', 'pal8'
     }
     VALID_SIZES = {
-        "sqcif", "qcif", "cif", "4cif", "16cif", "qqvga", "qvga", "vga", 
-        "svga", "xga", "uxga", "qxga", "sxga", "qsxga", "qzxga", "wsxga", 
-        "wuxga", "woxga", "wqsxga", "wquxga", "whsxfga", "hsxga", "cga", 
-        "ega", "hd480", "hd720", "hd1080", "uhd2160", "8k", "ntsc", "pal", 
-        "qntsc", "qpal", "sntsc", "spal", "film", "ntsc-film", "2k", 
-        "2kflat", "2kscope", "4k", "4kflat", "4kscope"
+        'sqcif', 'qcif', 'cif', '4cif', '16cif', 'qqvga', 'qvga', 'vga', 
+        'svga', 'xga', 'uxga', 'qxga', 'sxga', 'qsxga', 'qzxga', 'wsxga', 
+        'wuxga', 'woxga', 'wqsxga', 'wquxga', 'whsxfga', 'hsxga', 'cga', 
+        'ega', 'hd480', 'hd720', 'hd1080', 'uhd2160', '8k', 'ntsc', 'pal', 
+        'qntsc', 'qpal', 'sntsc', 'spal', 'film', 'ntsc-film', '2k', 
+        '2kflat', '2kscope', '4k', '4kflat', '4kscope'
     }
 
     def __init__(
@@ -38,6 +38,7 @@ class ImageOutputOptions(Options):
         size: str | None = None,
         pixel_format: str | None = None,
         compression_level: int | None = None,
+        crf: int | None = None,
     ) -> None:
         self._format: str | None = None
         self._codec: str | None = None
@@ -47,6 +48,7 @@ class ImageOutputOptions(Options):
         self._size: str | None = None
         self._pixel_format: str | None = None
         self._compression_level: int | None = None
+        self._crf: int | None = None
 
         if format is not None: self.format = format
         if codec is not None: self.codec = codec
@@ -56,6 +58,7 @@ class ImageOutputOptions(Options):
         if size is not None: self.size = size
         if pixel_format is not None: self.pixel_format = pixel_format
         if compression_level is not None: self.compression_level = compression_level
+        if crf is not None: self.crf = crf
 
 
     # ========== PROPERTY: format ==========
@@ -155,32 +158,47 @@ class ImageOutputOptions(Options):
     def compression_level(self) -> None: self._compression_level = None
 
 
+    # ========== PROPERTY: crf ==========
+    @property
+    def crf(self) -> int | None: return self._crf
+
+    @crf.setter
+    @validate_int(min_value=0, max_value=51)
+    def crf(self, value: int) -> None: self._crf = value
+
+    @crf.deleter
+    def crf(self) -> None: self._crf = None
+
+
     # ========== MÉTODOS ==========
     def generate_command_args(self) -> list:
         args = []
 
         if self._format:
-            args.extend(["-f", self._format])
+            args.extend(['-f', self._format])
 
         if self._codec:
-            args.extend(["-c:v", self._codec])
+            args.extend(['-c:v', self._codec])
 
         if self._qscale is not None:
-            args.extend(["-qscale:v", str(self._qscale)])
+            args.extend(['-qscale:v', str(self._qscale)])
 
         if self._frames:
-            args.extend(["-frames:v", str(self._frames)])
+            args.extend(['-frames:v', str(self._frames)])
 
         if self._framerate:
-            args.extend(["-r", str(self._framerate)])
+            args.extend(['-r', str(self._framerate)])
 
         if self._size:
-            args.extend(["-s", self._size])
+            args.extend(['-s', self._size])
 
         if self._pixel_format:
-            args.extend(["-pix_fmt", self._pixel_format])
+            args.extend(['-pix_fmt', self._pixel_format])
 
         if self._compression_level is not None:
-            args.extend(["-compression_level", str(self._compression_level)])
+            args.extend(['-compression_level', str(self._compression_level)])
+
+        if self._crf is not None:
+            args.extend(['-crf', str(self._crf)])
 
         return args

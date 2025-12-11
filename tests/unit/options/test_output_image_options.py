@@ -1,5 +1,5 @@
 import pytest
-from pympeg import ImageOutputOptions
+from pympeg import OutputImageOptions
 
 # Structure: (atributo, valor_input, getter_esperado, args_esperados)
 VALID_IMAGE_OPTIONS = [
@@ -65,7 +65,7 @@ INVALID_IMAGE_OPTIONS = [
 
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_IMAGE_OPTIONS)
 def test_image_setters_valid_storage(attr, input_val, expected_getter, _args):
-    options = ImageOutputOptions()
+    options = OutputImageOptions()
 
     setattr(options, attr, input_val)
 
@@ -74,7 +74,7 @@ def test_image_setters_valid_storage(attr, input_val, expected_getter, _args):
 
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_IMAGE_OPTIONS)
 def test_image_setters_invalid_raise_error(attr, val_inv, exception_type):
-    options = ImageOutputOptions()
+    options = OutputImageOptions()
 
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
@@ -84,14 +84,14 @@ def test_image_setters_invalid_raise_error(attr, val_inv, exception_type):
 @pytest.mark.parametrize('attr, input_val, _expected, expected_args', VALID_IMAGE_OPTIONS)
 def test_image_command_args_generation(attr, input_val, _expected, expected_args):
     input_args = {attr: input_val}
-    options = ImageOutputOptions(**input_args)
+    options = OutputImageOptions(**input_args)
 
     flags = options.generate_command_args()
     
     assert flags == expected_args
 
 def test_image_full_initialization():
-    opts = ImageOutputOptions(
+    opts = OutputImageOptions(
         format='png',
         codec='png',
         qscale=2,
@@ -108,6 +108,6 @@ def test_image_full_initialization():
     ]
 
 def test_image_empty_initialization():
-    options = ImageOutputOptions()
+    options = OutputImageOptions()
 
     assert options.generate_command_args() == []

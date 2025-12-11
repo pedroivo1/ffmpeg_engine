@@ -1,39 +1,48 @@
-# from __future__ import annotations
-# from .flags import VideoFlags
+from pathlib import Path
+from .runner import FFmpegRunner
+from .interfaces import Options
+from .options import (
+    GlobalOptions, InputAudioOptions, InputVideoOptions, InputImageOptions,
+    OutputAudioOptions, OutputVideoOptions, OutputImageOptions
+)
 
-# class VideoCodecBuilder:
-#     def __init__(self) -> None:
-#         self._video_codec = 'libx264'
-#         self._crf = 23
-#         self._preset = 'medium'
-#         self._scale = None
-#         self._fps = None
+class FFmpegBuilder:
+    """Implementa a interface fluente (Method Chaining) para configurar e executar comandos FFmpeg."""
 
-#     def set_codec(self, codec: str) -> VideoCodecBuilder:
-#         self._video_codec = codec
-#         return self
+    def __init__(self, input_path: str, output_path: str):
+        self._runner = FFmpegRunner(input_path, output_path)
 
-#     def set_crf(self, crf: int) -> VideoCodecBuilder:
-#         self._crf = crf
-#         return self
+    def with_global_options(self, options: GlobalOptions):
+        """Aplica opções globais (ex: overwrite, hide_banner)."""
+        if not isinstance(options, GlobalOptions):
+            raise TypeError("Expected GlobalOptions instance")
+        self._runner.add_global_options(options)
+        return self
 
-#     def set_preset(self, preset: str) -> VideoCodecBuilder:
-#         self._preset = preset
-#         return self
+    def with_input_options(self, options: Options):
+        """
+        Aplica opções de entrada (flags que vêm ANTES do -i input).
+        Aceita: InputVideoOptions, InputAudioOptions, InputImageOptions
+        """
+        valid_inputs = (InputVideoOptions, InputAudioOptions, InputImageOptions)
+        if not isinstance(options, valid_inputs):
+            raise TypeError(f"Expected input options, got {type(options).__name__}")
+        
+        self._runner.add_input_options(options)
+        return self
 
-#     def set_scale(self, width: int, height: int = -1) -> VideoCodecBuilder:
-#         self._scale = f"{width}:{height}"
-#         return self
+    def with_output_options(self, options: Options):
+        """
+        Aplica opções de saída (codecs, bitrate, qscale, etc).
+        Aceita: OutputVideoOptions, OutputAudioOptions, OutputImageOptions
+        """
+        valid_outputs = (OutputVideoOptions, OutputAudioOptions, OutputImageOptions)
+        if not isinstance(options, valid_outputs):
+            raise TypeError(f"Expected output options, got {type(options).__name__}")
+        
+        self._runner.add_output_options(options)
+        return self
 
-#     def set_fps(self, fps: int) -> VideoCodecBuilder:
-#         self._fps = fps
-#         return self
-
-#     def build(self) -> VideoFlags:
-#         return VideoFlags(
-#             video_codec=self._video_codec,
-#             crf=self._crf,
-#             preset=self._preset,
-#             scale=self._scale,
-#             fps=self._fps
-#         )
+    def run(self):
+        """Executa o comando final."""
+        self._runner.run()
