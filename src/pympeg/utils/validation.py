@@ -157,3 +157,30 @@ def validate_video_size(aliases: set):
             return func(self, s_val)
         return wrapper
     return decorator
+
+def validate_number(min_value: float | int | None = None, max_value: float | int | None = None):
+    """
+    Valida números (int ou float), com limites opcionais.
+    Útil para qscale ou framerate que podem ser float.
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, value):
+            if not isinstance(value, (int, float)):
+                raise TypeError(
+                    f"{func.__name__} must be int or float, got {type(value).__name__}"
+                )
+            
+            if min_value is not None and value < min_value:
+                raise ValueError(
+                    f"{func.__name__} must be >= {min_value}, got {value}"
+                )
+
+            if max_value is not None and value > max_value:
+                raise ValueError(
+                    f"{func.__name__} must be <= {max_value}, got {value}"
+                )
+            
+            return func(self, value)
+        return wrapper
+    return decorator

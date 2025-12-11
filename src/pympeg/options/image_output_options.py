@@ -1,8 +1,33 @@
 from pympeg.interfaces import Options
-import re
-
+from pympeg.utils.validation import (
+    validate_choices, validate_int, validate_video_size, 
+    validate_number
+)
 
 class ImageOutputOptions(Options):
+
+    VALID_FORMATS = {
+        "image2", "image2pipe", "png", "jpeg", "jpg", "gif", 
+        "bmp", "tiff", "webp", "avif", "heif"
+    }
+    VALID_CODECS = {
+        "png", "mjpeg", "libwebp", "av1", "hevc", "libx264", 
+        "gif", "bmp", "tiff", "copy"
+    }
+    VALID_PIX_FMTS = {
+        "yuv420p", "yuv422p", "yuv444p", "rgb24", "bgr24", 
+        "rgba", "bgra", "gray", "monow", "monob", 
+        "yuyv422", "pal8"
+    }
+    VALID_SIZES = {
+        "sqcif", "qcif", "cif", "4cif", "16cif", "qqvga", "qvga", "vga", 
+        "svga", "xga", "uxga", "qxga", "sxga", "qsxga", "qzxga", "wsxga", 
+        "wuxga", "woxga", "wqsxga", "wquxga", "whsxfga", "hsxga", "cga", 
+        "ega", "hd480", "hd720", "hd1080", "uhd2160", "8k", "ntsc", "pal", 
+        "qntsc", "qpal", "sntsc", "spal", "film", "ntsc-film", "2k", 
+        "2kflat", "2kscope", "4k", "4kflat", "4kscope"
+    }
+
     def __init__(
         self,
         format: str | None = None,
@@ -14,155 +39,172 @@ class ImageOutputOptions(Options):
         pixel_format: str | None = None,
         compression_level: int | None = None,
     ) -> None:
-        self.format = format
-        self.codec = codec
-        self.qscale = qscale
-        self.frames = frames
-        self.framerate = framerate
-        self.size = size
-        self.pixel_format = pixel_format
-        self.compression_level = compression_level
+        self._format = None
+        self._codec = None
+        self._qscale = None
+        self._frames = None
+        self._framerate = None
+        self._size = None
+        self._pixel_format = None
+        self._compression_level = None
 
+        if format is not None: self.format = format
+        if codec is not None: self.codec = codec
+        if qscale is not None: self.qscale = qscale
+        if frames is not None: self.frames = frames
+        if framerate is not None: self.framerate = framerate
+        if size is not None: self.size = size
+        if pixel_format is not None: self.pixel_format = pixel_format
+        if compression_level is not None: self.compression_level = compression_level
+
+
+    # ========== PROPERTY: format ==========
+    @property
+    def format(self) -> str | None:
+        return self._format
+
+    @format.setter
+    @validate_choices(VALID_FORMATS)
+    def format(self, value: str) -> None:
+        self._format = value
+
+    @format.deleter
+    def format(self) -> None:
+        self._format = None
+
+
+    # ========== PROPERTY: codec ==========
+    @property
+    def codec(self) -> str | None:
+        return self._codec
+
+    @codec.setter
+    @validate_choices(VALID_CODECS)
+    def codec(self, value: str) -> None:
+        self._codec = value
+
+    @codec.deleter
+    def codec(self) -> None:
+        self._codec = None
+
+
+    # ========== PROPERTY: qscale ==========
+    @property
+    def qscale(self) -> int | float | None:
+        return self._qscale
+
+    @qscale.setter
+    @validate_number(min_value=0)
+    def qscale(self, value: int | float) -> None:
+        self._qscale = value
+
+    @qscale.deleter
+    def qscale(self) -> None:
+        self._qscale = None
+
+
+    # ========== PROPERTY: frames ==========
+    @property
+    def frames(self) -> int | None:
+        return self._frames
+
+    @frames.setter
+    @validate_int(min_value=1)
+    def frames(self, value: int) -> None:
+        self._frames = value
+
+    @frames.deleter
+    def frames(self) -> None:
+        self._frames = None
+
+
+    # ========== PROPERTY: framerate ==========
+    @property
+    def framerate(self) -> float | int | None:
+        return self._framerate
+
+    @framerate.setter
+    # Framerate deve ser estritamente maior que 0
+    @validate_number(min_value=0.00001) 
+    def framerate(self, value: float | int) -> None:
+        self._framerate = value
+
+    @framerate.deleter
+    def framerate(self) -> None:
+        self._framerate = None
+
+
+    # ========== PROPERTY: size ==========
+    @property
+    def size(self) -> str | None:
+        return self._size
+
+    @size.setter
+    @validate_video_size(VALID_SIZES)
+    def size(self, value: str) -> None:
+        self._size = value
+
+    @size.deleter
+    def size(self) -> None:
+        self._size = None
+
+
+    # ========== PROPERTY: pixel_format ==========
+    @property
+    def pixel_format(self) -> str | None:
+        return self._pixel_format
+
+    @pixel_format.setter
+    @validate_choices(VALID_PIX_FMTS)
+    def pixel_format(self, value: str) -> None:
+        self._pixel_format = value
+
+    @pixel_format.deleter
+    def pixel_format(self) -> None:
+        self._pixel_format = None
+
+
+    # ========== PROPERTY: compression_level ==========
+    @property
+    def compression_level(self) -> int | None:
+        return self._compression_level
+
+    @compression_level.setter
+    @validate_int(min_value=0, max_value=100)
+    def compression_level(self, value: int) -> None:
+        self._compression_level = value
+
+    @compression_level.deleter
+    def compression_level(self) -> None:
+        self._compression_level = None
+
+
+    # ========== MÉTODOS ==========
     def generate_command_args(self) -> list:
         args = []
 
-        if self.format is not None:
-            valid_formats = {
-                "image2",
-                "image2pipe",
-                "png",
-                "jpeg",
-                "jpg",
-                "gif",
-                "bmp",
-                "tiff",
-                "webp",
-                "avif",
-                "heif",
-            }
-            if self.format in valid_formats:
-                args.extend(["-f", self.format])
-            else:
-                self._log_invalid_value("format", self.format)
+        if self._format:
+            args.extend(["-f", self._format])
 
-        if self.codec is not None:
-            valid_codecs = {
-                "png",
-                "mjpeg",
-                "libwebp",
-                "av1",
-                "hevc",
-                "libx264",
-                "gif",
-                "bmp",
-                "tiff",
-                "copy",
-            }
-            if self.codec in valid_codecs:
-                args.extend(["-c:v", self.codec])
-            else:
-                self._log_invalid_value("codec", self.codec)
+        if self._codec:
+            args.extend(["-c:v", self._codec])
 
-        if self.qscale is not None:
-            if isinstance(self.qscale, (int, float)) and self.qscale >= 0:
-                args.extend(["-qscale:v", str(self.qscale)])
-            else:
-                self._log_invalid_value("qscale", self.qscale)
+        if self._qscale is not None:
+            args.extend(["-qscale:v", str(self._qscale)])
 
-        if self.frames is not None:
-            if isinstance(self.frames, int) and self.frames > 0:
-                args.extend(["-frames:v", str(self.frames)])
-            else:
-                self._log_invalid_value("frames", self.frames)
+        if self._frames:
+            args.extend(["-frames:v", str(self._frames)])
 
-        if self.framerate is not None:
-            if isinstance(self.framerate, (float, int)) and self.framerate > 0:
-                args.extend(["-r", str(self.framerate)])
-            else:
-                self._log_invalid_value("framerate", self.framerate)
+        if self._framerate:
+            args.extend(["-r", str(self._framerate)])
 
-        if self.size is not None:
-            valid_aliases = {
-                "sqcif",
-                "qcif",
-                "cif",
-                "4cif",
-                "16cif",
-                "qqvga",
-                "qvga",
-                "vga",
-                "svga",
-                "xga",
-                "uxga",
-                "qxga",
-                "sxga",
-                "qsxga",
-                "qzxga",
-                "wsxga",
-                "wuxga",
-                "woxga",
-                "wqsxga",
-                "wquxga",
-                "whsxfga",
-                "hsxga",
-                "cga",
-                "ega",
-                "hd480",
-                "hd720",
-                "hd1080",
-                "uhd2160",
-                "8k",
-                "ntsc",
-                "pal",
-                "qntsc",
-                "qpal",
-                "sntsc",
-                "spal",
-                "film",
-                "ntsc-film",
-                "2k",
-                "2kflat",
-                "2kscope",
-                "4k",
-                "4kflat",
-                "4kscope",
-            }
-            if isinstance(self.size, str) and len(self.size) > 0:
-                s_val = self.size.lower()
-                is_wxh = re.match(r"^\d+x\d+$", s_val)
-                is_alias = s_val in valid_aliases
+        if self._size:
+            args.extend(["-s", self._size])
 
-                if is_wxh or is_alias:
-                    args.extend(["-s", s_val])
-                else:
-                    self._log_invalid_value("size", self.size)
-            else:
-                self._log_invalid_value("size", self.size)
+        if self._pixel_format:
+            args.extend(["-pix_fmt", self._pixel_format])
 
-        if self.pixel_format is not None:
-            valid_pix_fmts = {
-                "yuv420p",
-                "yuv422p",
-                "yuv444p",
-                "rgb24",
-                "bgr24",
-                "rgba",
-                "bgra",
-                "gray",
-                "monow",
-                "monob",
-                "yuyv422",
-                "pal8",
-            }
-            if self.pixel_format in valid_pix_fmts:
-                args.extend(["-pix_fmt", self.pixel_format])
-            else:
-                self._log_invalid_value("pixel_format", self.pixel_format)
-
-        if self.compression_level is not None:
-            if isinstance(self.compression_level, int) and 0 <= self.compression_level <= 100:
-                args.extend(["-compression_level", str(self.compression_level)])
-            else:
-                self._log_invalid_value("compression_level", self.compression_level)
+        if self._compression_level is not None:
+            args.extend(["-compression_level", str(self._compression_level)])
 
         return args
