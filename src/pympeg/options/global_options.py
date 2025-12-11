@@ -4,21 +4,21 @@ from pympeg.utils.validation import validate_choices
 
 class GlobalOptions(Options):
 
-    OVERWRITE_VALUES = {"yes", "no"}
-    HIDE_BANNER_VALUES = {'yes'}
+    OVERWRITE_VALUES = {True, False}
+    HIDE_BANNER_VALUES = {True}
     LOGLEVEL_VALUES = {
         "quiet", "panic", "fatal", "error", "warning", 
         "info", "verbose", "debug", "trace"
     }
-    STATS_VALUES = {"yes", "no"}
+    STATS_VALUES = {True, False}
 
 
     def __init__(
         self,
-        overwrite: str | None = None,
-        hide_banner: str | None = None,
+        overwrite: bool | None = None,
+        hide_banner: bool | None = None,
         loglevel: str | None = None,
-        stats: str | None = None,
+        stats: bool | None = None,
     ) -> None:
         self._overwrite: str | None = None
         self._hide_banner: str | None = None
@@ -35,32 +35,37 @@ class GlobalOptions(Options):
             self.stats = stats
 
 
+    # ========== PROPERTY: overwrite ==========
     @property
-    def overwrite(self) -> str | None:
+    def overwrite(self) -> bool | None:
         return self._overwrite
     
     @overwrite.setter
     @validate_choices(OVERWRITE_VALUES)
-    def overwrite(self, value) -> None:
+    def overwrite(self, value: bool) -> None:
         self._overwrite = value
 
     @overwrite.deleter
     def overwrite(self) -> None:
         self._overwrite = None
 
+
+    # ========== PROPERTY: hide_banner ==========
     @property
-    def hide_banner(self) -> str | None:
+    def hide_banner(self) -> bool | None:
         return self._hide_banner
     
     @hide_banner.setter
     @validate_choices(HIDE_BANNER_VALUES)
-    def hide_banner(self, value: str) -> None:
+    def hide_banner(self, value: bool) -> None:
         self._hide_banner = value
 
     @hide_banner.deleter
     def hide_banner(self) -> None:
         self._hide_banner = None
 
+
+    # ========== PROPERTY: loglevel ==========
     @property
     def loglevel(self) -> str | None:
         return self._loglevel
@@ -74,29 +79,37 @@ class GlobalOptions(Options):
     def loglevel(self) -> None:
         self._loglevel = None
     
+
+    # ========== PROPERTY: stats ==========
     @property
-    def stats(self) -> str | None:
+    def stats(self) -> bool | None:
         return self._stats
 
     @stats.setter
     @validate_choices(STATS_VALUES)
-    def stats(self, value: str) -> None:
+    def stats(self, value: bool) -> None:
         self._stats = value
 
     @stats.deleter
     def stats(self) -> None:
         self._stats = None
 
+
+    # ========== MÉTODOS ==========
     def generate_command_args(self) -> list:
-        args = []
+            args = []
 
-        if self._overwrite is not None:
-            args.append("-y" if self._overwrite == "yes" else "-n")
-        if self._hide_banner is not None:
-            args.append("-hide_banner")
-        if self._loglevel is not None:
-            args.extend(["-loglevel", self._loglevel])
-        if self._stats is not None:
-            args.append("-stats" if self._stats == "yes" else "-nostats")
+            if self._overwrite is not None:
+                args.append("-y" if self._overwrite else "-n")
+            
+            if self._hide_banner is not None:
+                if self._hide_banner: 
+                    args.append("-hide_banner")
 
-        return args
+            if self._loglevel is not None:
+                args.extend(["-loglevel", self._loglevel])
+
+            if self._stats is not None:
+                args.append("-stats" if self._stats else "-nostats")
+
+            return args

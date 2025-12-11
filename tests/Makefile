@@ -1,6 +1,7 @@
 .PHONY: test-unit
 .PHONY: test-ordered
 .PHONY: test-global-options
+.PHONY: test-image-in-options
 
 test-unit:
 	python -m pytest tests/unit/
@@ -10,3 +11,6 @@ test-ordered:
 
 test-global-options:
 	python -m pytest .\tests\unit\options\test_global_options.py
+
+test-image-in-options:
+	python -m pytest .\tests\unit\options\test_image_input_options.py

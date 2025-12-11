@@ -1,10 +1,8 @@
 from .global_options import GlobalOptions
 
-from .input_options import (
-    ImageInputOptions,
-    AudioInputOptions,
-    VideoInputOptions
-)
+from .image_input_options import ImageInputOptions
+from .audio_input_options import AudioInputOptions
+from .video_input_options import VideoInputOptions
 
 from .output_options import (
     ImageOutputOptions,
