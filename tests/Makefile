@@ -14,3 +14,6 @@ test-global-options:
 
 test-image-in-options:
 	python -m pytest .\tests\unit\options\test_image_input_options.py
+
+test-audio-in-options:
+	python -m pytest .\tests\unit\options\test_audio_input_options.py

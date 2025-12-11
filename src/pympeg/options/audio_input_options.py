@@ -1,8 +1,19 @@
 from datetime import timedelta
 from pympeg.interfaces import Options
+from pympeg.utils.validation import validate_choices, time_to_string, validate_int, convert_sample_rate
 
 
 class AudioInputOptions(Options):
+    
+    AUDIO_FORMATS = {
+        "mp3", "wav", "flac", "aac", "ogg", "m4a", "aiff",
+        "s16le", "f32be", "pcm_s16le", "alsa", "pulse"
+    }
+    AUDIO_CODECS = {
+        "mp3", "flac", "aac", "s16le", "f32be", "pcm_s16le"
+    }
+
+
     def __init__(
         self,
         format: str | None = None,
@@ -13,94 +24,158 @@ class AudioInputOptions(Options):
         sample_rate: int | float | str | None = None,
         stream_loop: int | None = None,
     ) -> None:
-        self.format = format
-        self.codec = codec
-        self.start_time = start_time
-        self.duration = duration
-        self.n_channels = n_channels
-        self.sample_rate = sample_rate
-        self.stream_loop = stream_loop
+        self._format: str | None = None
+        self._codec: str | None = None
+        self._start_time: str | None = None
+        self._duration: str | None = None
+        self._n_channels: int | None = None
+        self._sample_rate: int | None = None
+        self._stream_loop: int | None = None
 
+        if format is not None:
+            self.format = format
+        if codec is not None:
+            self.codec = codec
+        if start_time is not None:
+            self.start_time = start_time
+        if duration is not None:
+            self.duration = duration
+        if n_channels is not None:
+            self.n_channels = n_channels
+        if sample_rate is not None:
+            self.sample_rate = sample_rate
+        if stream_loop is not None:
+            self.stream_loop = stream_loop
+
+
+    # ========== PROPERTY: format ==========
+    @property
+    def format(self) -> str | None:
+        return self._format
+
+    @format.setter
+    @validate_choices(AUDIO_FORMATS)
+    def format(self, value: str) -> None:
+        self._format = value
+
+    @format.deleter
+    def format(self) -> None:
+        self._format = None
+
+
+    # ========== PROPERTY: codec ==========
+    @property
+    def codec(self) -> str | None:
+        return self._codec
+
+    @codec.setter
+    @validate_choices(AUDIO_CODECS)
+    def codec(self, value: str) -> None:
+        self._codec = value
+
+    @codec.deleter
+    def codec(self) -> None:
+        self._codec = None
+
+
+    # ========== PROPERTY: start_time ==========
+    @property
+    def start_time(self) -> str | None:
+        return self._start_time
+
+    @start_time.setter
+    @time_to_string()
+    def start_time(self, value: str) -> None:
+        self._start_time = value
+
+    @start_time.deleter
+    def start_time(self) -> None:
+        self._start_time = None
+
+
+    # ========== PROPERTY: duration ==========
+    @property
+    def duration(self) -> str | None:
+        return self._duration
+
+    @duration.setter
+    @time_to_string()
+    def duration(self, value: str) -> None:
+        self._duration = value
+
+    @duration.deleter
+    def duration(self) -> None:
+        self._duration = None
+
+
+    # ========== PROPERTY: n_channels ==========
+    @property
+    def n_channels(self) -> int | None:
+        return self._n_channels
+
+    @n_channels.setter
+    @validate_int(min_value=1)
+    def n_channels(self, value: int) -> None:
+        self._n_channels = value
+
+    @n_channels.deleter
+    def n_channels(self) -> None:
+        self._n_channels = None
+
+
+    # ========== PROPERTY: sample_rate ==========
+    @property
+    def sample_rate(self) -> int | None:
+        return self._sample_rate
+
+    @sample_rate.setter
+    @convert_sample_rate()
+    def sample_rate(self, value: int | float | str) -> None:
+        self._sample_rate = value
+
+    @sample_rate.deleter
+    def sample_rate(self) -> None:
+        self._sample_rate = None
+
+
+    # ========== PROPERTY: stream_loop ==========
+    @property
+    def stream_loop(self) -> int | None:
+        return self._stream_loop
+
+    @stream_loop.setter
+    @validate_int(min_value=-1)
+    def stream_loop(self, value: int) -> None:
+        self._stream_loop = value
+
+    @stream_loop.deleter
+    def stream_loop(self) -> None:
+        self._stream_loop = None
+
+
+    # ========== MÉTODOS ==========
     def generate_command_args(self) -> list:
         args = []
 
-        if self.format is not None:
-            valid_audio_formats = {
-                "mp3",
-                "wav",
-                "flac",
-                "aac",
-                "ogg",
-                "m4a",
-                "aiff",
-                "s16le",
-                "f32be",
-                "pcm_s16le",
-                "alsa",
-                "pulse",
-            }
-            if self.format in valid_audio_formats or self.format.startswith("pcm"):
-                args.extend(["-f", self.format])
-            else:
-                self._log_invalid_value("format", self.format)
+        if self._format is not None:
+            args.extend(["-f", self._format])
 
-        if self.codec is not None:
-            valid_audio_codecs = {"mp3", "flac", "aac", "s16le", "f32be", "pcm_s16le"}
-            if self.codec in valid_audio_codecs:
-                args.extend(["-c:a", self.codec])
-            else:
-                self._log_invalid_value("codec", self.codec)
+        if self._codec is not None:
+            args.extend(["-c:a", self._codec])
 
-        if self.start_time is not None:
-            time = self.time_to_str(self.start_time, 0)
-            if time is not None:
-                args.extend(["-ss", time])
-            else:
-                self._log_invalid_value("start_time", self.start_time)
+        if self._start_time is not None:
+            args.extend(["-ss", self._start_time])
 
-        if self.duration is not None:
-            time = self.time_to_str(self.duration, 0)
-            if time is not None:
-                args.extend(["-t", time])
-            else:
-                self._log_invalid_value("duration", self.duration)
+        if self._duration is not None:
+            args.extend(["-t", self._duration])
 
-        if self.n_channels is not None:
-            if isinstance(self.n_channels, int) and self.n_channels > 0:
-                args.extend(["-ac", str(self.n_channels)])
-            else:
-                self._log_invalid_value("n_channels", self.n_channels)
+        if self._n_channels is not None:
+            args.extend(["-ac", str(self._n_channels)])
 
-        if self.sample_rate is not None:
-            is_valid = False
-            final_value = None
-            if isinstance(self.sample_rate, (int, float)) and self.sample_rate > 0:
-                is_valid = True
-                final_value = int(self.sample_rate)
-            elif isinstance(self.sample_rate, str):
-                s_val = self.sample_rate.lower().strip()
-                if s_val.endswith("k"):
-                    try:
-                        number_part = float(s_val[:-1])
-                        if number_part > 0:
-                            is_valid = True
-                            final_value = int(number_part * 1000)
-                    except ValueError:
-                        pass
-                elif s_val.replace(".", "", 1).isdigit():
-                    val_float = float(s_val)
-                    if val_float > 0:
-                        is_valid = True
-                        final_value = int(val_float)
-            if is_valid and final_value is not None:
-                args.extend(["-ar", str(final_value)])
-            else:
-                self._log_invalid_value("sample_rate", self.sample_rate)
+        if self._sample_rate is not None:
+            args.extend(["-ar", str(self._sample_rate)])
 
-        if self.stream_loop is not None:
-            if isinstance(self.stream_loop, int) and self.stream_loop >= -1:
-                args.extend(["-stream_loop", str(self.stream_loop)])
-            else:
-                self._log_invalid_value("stream_loop", self.stream_loop)
+        if self._stream_loop is not None:
+            args.extend(["-stream_loop", str(self._stream_loop)])
 
         return args

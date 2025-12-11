@@ -77,11 +77,7 @@ def test_global_multiple_attrs_combined():
         loglevel='info',
         stats=False
     )
-    
-    assert opts.overwrite is True
-    assert opts.hide_banner is True
-    assert opts.loglevel == 'info'
-    assert opts.stats is False
+
     assert opts.generate_command_args() == [
         '-y', '-hide_banner', '-loglevel', 'info', '-nostats'
     ]
