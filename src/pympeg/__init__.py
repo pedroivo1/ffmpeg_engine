@@ -1,5 +1,5 @@
-from .runner import FFmpegRunner
-from .builders import FFmpegBuilder
+from .runner import Runner
+from .builder import Builder
 
 from .options import (
     GlobalOptions,
@@ -12,8 +12,8 @@ from .options import (
 )
 
 __all__ = [
-    'FFmpegRunner',
-    'FFmpegBuilder',
+    'Runner',
+    'Builder',
     'GlobalOptions',
     'InputImageOptions',
     'InputAudioOptions',

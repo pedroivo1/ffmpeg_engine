@@ -9,14 +9,10 @@ VALID_VIDEO_OUT_OPTIONS = [
     ('format',       'webm',          'webm',          ['-f', 'webm']),
     ('format',       'gif',           'gif',           ['-f', 'gif']),
 
-    # video_codec
-    ('video_codec',  'libx264',       'libx264',       ['-c:v', 'libx264']),
-    ('video_codec',  'libx265',       'libx265',       ['-c:v', 'libx265']),
-    ('video_codec',  'copy',          'copy',          ['-c:v', 'copy']),
-
-    # audio_codec
-    ('audio_codec',  'aac',           'aac',           ['-c:a', 'aac']),
-    ('audio_codec',  'libmp3lame',    'libmp3lame',    ['-c:a', 'libmp3lame']),
+    # codec
+    ('codec',  'libx264',       'libx264',       ['-c:v', 'libx264']),
+    ('codec',  'libx265',       'libx265',       ['-c:v', 'libx265']),
+    ('codec',  'copy',          'copy',          ['-c:v', 'copy']),
 
     # bitrate
     ('bitrate',      2000000,         2000000,         ['-b:v', '2000000']),
@@ -71,8 +67,7 @@ VALID_VIDEO_OUT_OPTIONS = [
 # Estrutura: (atributo, valor_invalido, tipo_excecao)
 INVALID_VIDEO_OUT_OPTIONS = [
     ('format',       'batata',        ValueError),
-    ('video_codec',  'h265',          ValueError),
-    ('audio_codec',  'h264',          ValueError),
+    ('codec',        'h265',          ValueError),
     ('bitrate',      0,               ValueError),
     ('bitrate',      'batata',        ValueError),
     ('bitrate',      -500,            ValueError),
@@ -94,15 +89,19 @@ INVALID_VIDEO_OUT_OPTIONS = [
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_VIDEO_OUT_OPTIONS)
 def test_video_out_setters_valid_storage(attr, input_val, expected_getter, _args):
     options = OutputVideoOptions()
+
     setattr(options, attr, input_val)
+
     assert getattr(options, attr) == expected_getter
 
 
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_VIDEO_OUT_OPTIONS)
 def test_video_out_setters_invalid_raise_error(attr, val_inv, exception_type):
     options = OutputVideoOptions()
+
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
+
     assert getattr(options, attr) is None
 
 
@@ -110,15 +109,16 @@ def test_video_out_setters_invalid_raise_error(attr, val_inv, exception_type):
 def test_video_out_command_args_generation(attr, input_val, _expected, expected_args):
     input_args = {attr: input_val}
     options = OutputVideoOptions(**input_args)
+
     flags = options.generate_command_args()
+
     assert flags == expected_args
 
 
 def test_video_out_full_initialization():
     opts = OutputVideoOptions(
         format='mp4',
-        video_codec='libx264',
-        audio_codec='aac',
+        codec='libx264',
         preset='fast',
         crf=23,
         movflags='faststart'
@@ -127,7 +127,6 @@ def test_video_out_full_initialization():
     assert opts.generate_command_args() == [
         '-f', 'mp4', 
         '-c:v', 'libx264', 
-        '-c:a', 'aac', 
         '-preset', 'fast', 
         '-crf', '23', 
         '-movflags', 'faststart'

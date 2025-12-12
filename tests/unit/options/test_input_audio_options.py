@@ -2,7 +2,6 @@ import pytest
 from datetime import timedelta
 from pympeg import InputAudioOptions
 
-
 # Structure: (attribute, input_value, expected_getter, expected_args)
 VALID_ATTR_OPTIONS = [
 

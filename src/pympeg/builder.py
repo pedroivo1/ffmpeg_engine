@@ -1,16 +1,15 @@
-from pathlib import Path
-from .runner import FFmpegRunner
+from .runner import Runner
 from .interfaces import Options
 from .options import (
     GlobalOptions, InputAudioOptions, InputVideoOptions, InputImageOptions,
     OutputAudioOptions, OutputVideoOptions, OutputImageOptions
 )
 
-class FFmpegBuilder:
+class Builder:
     """Implementa a interface fluente (Method Chaining) para configurar e executar comandos FFmpeg."""
 
     def __init__(self, input_path: str, output_path: str):
-        self._runner = FFmpegRunner(input_path, output_path)
+        self._runner = Runner(input_path, output_path)
 
     def with_global_options(self, options: GlobalOptions):
         """Aplica opções globais (ex: overwrite, hide_banner)."""

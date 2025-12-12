@@ -2,7 +2,6 @@ import pytest
 from datetime import timedelta
 from pympeg import InputVideoOptions
 
-
 # Structure: (atributo, valor_input, getter_esperado, args_esperados)
 VALID_VIDEO_OPTIONS = [
     ('format',       'mp4',           'mp4',                ['-f', 'mp4']),

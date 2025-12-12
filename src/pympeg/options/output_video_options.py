@@ -12,7 +12,7 @@ class OutputVideoOptions(Options):
         'mp4', 'avi', 'mov', 'mkv', 'webm', 'flv', 'mpeg', '3gp', 
         'ts', 'ogv', 'asf', 'wmv', 'gif', 'matroska', 'm4v'
     }
-    VALID_VIDEO_CODECS = {
+    CODECS = {
         'libx264', 'h264', 'libx265', 'hevc', 'vp9', 'libvpx-vp9', 
         'vp8', 'libvpx', 'mpeg4', 'mpeg2video', 'prores', 'dnxhd', 
         'ffv1', 'copy', 'mjpeg', 'h264_nvenc', 'hevc_nvenc', 
@@ -51,8 +51,7 @@ class OutputVideoOptions(Options):
     def __init__(
         self,
         format: str | None = None,
-        video_codec: str | None = None,
-        audio_codec: str | None = None,
+        codec: str | None = None,
         bitrate: str | int | None = None,
         fps: float | int | None = None,
         size: str | None = None,
@@ -66,8 +65,7 @@ class OutputVideoOptions(Options):
         tune: str | None = None
     ) -> None:
         self._format: str | None = None
-        self._video_codec: str | None = None
-        self._audio_codec: str | None = None
+        self._codec: str | None = None
         self._bitrate: str | int | None = None
         self._fps: float | int | None = None
         self._size: str | None = None
@@ -81,8 +79,7 @@ class OutputVideoOptions(Options):
         self._tune: str | None = None
 
         if format is not None: self.format = format
-        if video_codec is not None: self.video_codec = video_codec
-        if audio_codec is not None: self.audio_codec = audio_codec
+        if codec is not None: self.codec = codec
         if bitrate is not None: self.bitrate = bitrate
         if fps is not None: self.fps = fps
         if size is not None: self.size = size
@@ -108,28 +105,16 @@ class OutputVideoOptions(Options):
     def format(self): self._format = None
 
 
-    # ========== PROPERTIES: video_codec ==========
+    # ========== PROPERTIES: codec ==========
     @property
-    def video_codec(self) -> str | None: return self._video_codec
+    def codec(self) -> str | None: return self._codec
 
-    @video_codec.setter
-    @validate_choices(VALID_VIDEO_CODECS)
-    def video_codec(self, value: str): self._video_codec = value
+    @codec.setter
+    @validate_choices(CODECS)
+    def codec(self, value: str): self._codec = value
 
-    @video_codec.deleter
-    def video_codec(self): self._video_codec = None
-
-
-    # ========== PROPERTIES: audio_codec ==========
-    @property
-    def audio_codec(self) -> str | None: return self._audio_codec
-
-    @audio_codec.setter
-    @validate_choices(VALID_AUDIO_CODECS)
-    def audio_codec(self, value: str): self._audio_codec = value
-
-    @audio_codec.deleter
-    def audio_codec(self): self._audio_codec = None
+    @codec.deleter
+    def codec(self): self._codec = None
 
 
     # ========== PROPERTIES: bitrate ==========
@@ -270,12 +255,9 @@ class OutputVideoOptions(Options):
         if self._format is not None:
             args.extend(['-f', self._format])
         
-        if self._video_codec is not None:
-            args.extend(['-c:v', self._video_codec])
-        
-        if self._audio_codec is not None:
-            args.extend(['-c:a', self._audio_codec])
-        
+        if self._codec is not None:
+            args.extend(['-c:v', self._codec])
+   
         if self._bitrate is not None:
             args.extend(['-b:v', str(self._bitrate)])
         
