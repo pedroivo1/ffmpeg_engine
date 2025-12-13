@@ -1,27 +1,22 @@
-from abc import ABC, abstractmethod
-import logging
-
-logger = logging.getLogger(__name__)
-logger.addHandler(logging.NullHandler())
-
+from abc import ABC
+from .descriptors import BaseOption
 
 class Options(ABC):
-    @abstractmethod
-    def generate_command_args(self) -> list:
-        pass
+    def __init__(self, **kwargs) -> None:
+        for key, value in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                raise AttributeError(f"Opção inválida: '{key}'")
 
-
-
-# def conflicts_with(other_param: str):
-#     '''Valida se dois parâmetros não estão definidos simultaneamente'''
-#     def decorator(func):
-#         def wrapper(self, value):
-#             other_value = getattr(self, other_param, None)
-#             if other_value is not None:
-#                 raise ValueError(
-#                     f'Conflito: não pode definir {func.__name__} '
-#                     f'quando {other_param}={other_value} já está definido'
-#                 )
-#             return func(self, value)
-#         return wrapper
-#     return decorator
+    def generate_command_args(self) -> list[str]:
+        args = []
+        for attr_name, attr_value in self.__class__.__dict__.items():
+            
+            if isinstance(attr_value, BaseOption):
+                value = getattr(self, attr_name)
+                
+                if value is not None:
+                    args.extend(attr_value.to_args(value))
+        
+        return args

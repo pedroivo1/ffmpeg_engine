@@ -32,7 +32,7 @@ INVALID_ATTR_OPTIONS = [
     ('format',      123,                    ValueError),
 
     ('loop',        5,                      ValueError),
-    ('loop',        '1',                    ValueError),
+    ('loop',        '1',                    TypeError),
 
     ('framerate',   0,                      ValueError),
     ('framerate',  -10,                     ValueError),

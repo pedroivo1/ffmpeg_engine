@@ -24,10 +24,10 @@ VALID_ATTR_OPTIONS = [
 
 # Structure: (attribute, invalid_value, expected_exception)
 INVALID_ATTR_OPTIONS = [
-    ('overwrite',   'invalid default', ValueError),
-    ('hide_banner', 'invalid default', ValueError),
-    ('loglevel',    'invalid default', ValueError),
-    ('stats',       'invalid default', ValueError),
+    ('overwrite',   'invalid value', TypeError),
+    ('hide_banner', 'invalid value', TypeError),
+    ('loglevel',    'invalid value', ValueError),
+    ('stats',       'invalid value', TypeError),
 ]
 
 
