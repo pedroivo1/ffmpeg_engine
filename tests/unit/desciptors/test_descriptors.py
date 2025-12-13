@@ -7,33 +7,25 @@ from pympeg.descriptors.base_option import (
     IntOption,
     FloatOption,
     TimeOption,
-    SampleRateOption
+    SampleRateOption,
+    VideoSizeOption,
+    BitrateOption,
+    DictOption
 )
 
-# --- 1. CLASSE DE MOCK PARA TESTES ---
-# O descriptor precisa morar numa classe para o __set_name__ e __get__ funcionarem
 class MockFfmpegOptions:
-    # Base
+
     generic = BaseOption('-gen')
-    
-    # Choice
     codec = ChoiceOption('-c:v', choices={'h264', 'hevc'})
-    
-    # Bool
     overwrite = BoolOption(true_flag='-y', false_flag='-n')
     banner = BoolOption(true_flag='-hide_banner') # Sem flag falsa
-    
-    # Int
     fps = IntOption('-r', min_val=1, max_val=120)
-    
-    # Float
     speed = FloatOption('-speed', min_val=0.1, max_val=10.0)
-    
-    # Time
     start = TimeOption('-ss')
-    
-    # Sample Rate
     ar = SampleRateOption('-ar')
+    size = VideoSizeOption('-s', valid_sizes={'hd1080', '4k'})
+    bitrate = BitrateOption('-b:v')
+    metadata = DictOption('-metadata')
 
 @pytest.fixture
 def mock_opts():
@@ -211,3 +203,101 @@ def test_sample_rate_errors(mock_opts, invalid_val):
     # Vamos pegar qualquer Exception para simplificar, ou especificar as duas
     with pytest.raises((ValueError, TypeError)):
         mock_opts.ar = invalid_val
+
+
+# ==============================================================================
+# TESTES: VIDEO SIZE OPTION
+# ==============================================================================
+
+@pytest.mark.parametrize("input_val, expected", [
+    ('hd1080', 'hd1080'),   # Nome válido
+    ('4K', '4k'),           # Case insensitive
+    ('1920x1080', '1920x1080'), # Resolução WxH
+    ('320x240', '320x240'),
+])
+def test_video_size_valid(mock_opts, input_val, expected):
+    mock_opts.size = input_val
+    assert mock_opts.size == expected
+
+@pytest.mark.parametrize("invalid_val", [
+    'vga',          # Nome não está no set de valid_sizes do mock
+    '100',          # Número solto
+    '100x',         # Formato incompleto
+    'x100',
+    'widthxheight', # Não numérico
+    1080            # Int não aceito
+])
+def test_video_size_invalid(mock_opts, invalid_val):
+    with pytest.raises(ValueError, match="Invalid video size"):
+        mock_opts.size = invalid_val
+
+# ==============================================================================
+# TESTES: BITRATE OPTION
+# ==============================================================================
+
+@pytest.mark.parametrize("input_val, expected_int", [
+    (1000, 1000),           # Int direto
+    ('1000', 1000),         # String numérica
+    ('1k', 1000),           # Sufixo k
+    ('1.5k', 1500),         # Float com sufixo k
+    ('1M', 1000000),        # Sufixo M
+    ('1.5M', 1500000),      # Float com sufixo M
+    ('  2k  ', 2000),       # Espaços
+])
+def test_bitrate_valid(mock_opts, input_val, expected_int):
+    mock_opts.bitrate = input_val
+    assert mock_opts.bitrate == expected_int
+    assert isinstance(mock_opts.bitrate, int)
+
+@pytest.mark.parametrize("invalid_val, error_type", [
+    (0, ValueError),        # Zero
+    (-100, ValueError),     # Negativo
+    ('0k', ValueError),     # Zero string
+    ('invalid', ValueError),# Lixo
+    (10.5, TypeError),      # Float puro não é aceito (deve ser int ou str)
+    ({}, TypeError),        # Tipo errado
+])
+def test_bitrate_invalid(mock_opts, invalid_val, error_type):
+    with pytest.raises(error_type):
+        mock_opts.bitrate = invalid_val
+
+# ==============================================================================
+# TESTES: DICT OPTION
+# ==============================================================================
+
+def test_dict_option_valid(mock_opts):
+    data = {'title': 'My Video', 'year': '2024'}
+    mock_opts.metadata = data
+    assert mock_opts.metadata == data
+
+def test_dict_option_to_args(mock_opts):
+    """Testa se o dicionário é expandido em múltiplos argumentos."""
+    data = {'title': 'Test', 'genre': ''} # Valor vazio deve ser ignorado
+    mock_opts.metadata = data
+    
+    # Acessa o descriptor na classe
+    desc = MockFfmpegOptions.metadata
+    args = desc.to_args(data)
+    
+    # Esperamos apenas 'title' porque 'genre' está vazio
+    assert args == ['-metadata', 'title=Test']
+
+def test_dict_option_multiple_args(mock_opts):
+    data = {'a': '1', 'b': '2'}
+    desc = MockFfmpegOptions.metadata
+    args = desc.to_args(data)
+    
+    # A ordem pode variar em dicionários (pré-Python 3.7), mas assumindo moderno:
+    # Deve conter [-metadata, a=1, -metadata, b=2]
+    assert len(args) == 4
+    assert args[0] == '-metadata'
+    assert args[2] == '-metadata'
+    assert 'a=1' in args
+    assert 'b=2' in args
+
+def test_dict_option_invalid(mock_opts):
+    with pytest.raises(TypeError, match="must be dict"):
+        mock_opts.metadata = "not a dict"
+    
+    with pytest.raises(TypeError):
+        mock_opts.metadata = [('key', 'value')] # Lista de tuplas não é dict
