@@ -5,7 +5,10 @@ from .base_option import (
     SampleRateOption,
     IntOption,
     FloatOption,
-    TimeOption
+    TimeOption,
+    VideoSizeOption,
+    BitrateOption,
+    DictOption
 )
 
 __all__ = [
@@ -15,5 +18,8 @@ __all__ = [
     'SampleRateOption',
     'IntOption',
     'FloatOption',
-    'TimeOption'
+    'TimeOption',
+    'VideoSizeOption',
+    'BitrateOption',
+    'DictOption'
 ]

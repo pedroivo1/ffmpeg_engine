@@ -1,7 +1,9 @@
 from pympeg.interfaces import Options
-from pympeg.utils.validation import (
-    validate_choices, validate_int, validate_video_size, 
-    validate_number
+from pympeg.descriptors import (
+    ChoiceOption, 
+    IntOption, 
+    FloatOption, 
+    VideoSizeOption
 )
 
 class OutputImageOptions(Options):
@@ -28,177 +30,23 @@ class OutputImageOptions(Options):
         '2kflat', '2kscope', '4k', '4kflat', '4kscope'
     }
 
-    def __init__(
-        self,
-        format: str | None = None,
-        codec: str | None = None,
-        qscale: int | float | None = None,
-        frames: int | None = None,
-        framerate: float | int | None = None,
-        size: str | None = None,
-        pixel_format: str | None = None,
-        compression_level: int | None = None,
-        crf: int | None = None,
-    ) -> None:
-        self._format: str | None = None
-        self._codec: str | None = None
-        self._qscale: int | float | None = None
-        self._frames: int | None = None
-        self._framerate: float | int | None = None
-        self._size: str | None = None
-        self._pixel_format: str | None = None
-        self._compression_level: int | None = None
-        self._crf: int | None = None
-
-        if format is not None: self.format = format
-        if codec is not None: self.codec = codec
-        if qscale is not None: self.qscale = qscale
-        if frames is not None: self.frames = frames
-        if framerate is not None: self.framerate = framerate
-        if size is not None: self.size = size
-        if pixel_format is not None: self.pixel_format = pixel_format
-        if compression_level is not None: self.compression_level = compression_level
-        if crf is not None: self.crf = crf
+    format: str | None
+    codec: str | None
+    qscale: float | int | None
+    frames: int | None
+    framerate: float | int | None
+    size: str | None
+    pixel_format: str | None
+    compression_level: int | None
+    crf: int | None
 
 
-    # ========== PROPERTY: format ==========
-    @property
-    def format(self) -> str | None: return self._format
-
-    @format.setter
-    @validate_choices(VALID_FORMATS)
-    def format(self, value: str) -> None: self._format = value
-
-    @format.deleter
-    def format(self) -> None: self._format = None
-
-
-    # ========== PROPERTY: codec ==========
-    @property
-    def codec(self) -> str | None: return self._codec
-
-    @codec.setter
-    @validate_choices(VALID_CODECS)
-    def codec(self, value: str) -> None: self._codec = value
-
-    @codec.deleter
-    def codec(self) -> None: self._codec = None
-
-
-    # ========== PROPERTY: qscale ==========
-    @property
-    def qscale(self) -> int | float | None: return self._qscale
-
-    @qscale.setter
-    @validate_number(min_value=0)
-    def qscale(self, value: int | float) -> None: self._qscale = value
-
-    @qscale.deleter
-    def qscale(self) -> None: self._qscale = None
-
-
-    # ========== PROPERTY: frames ==========
-    @property
-    def frames(self) -> int | None: return self._frames
-
-    @frames.setter
-    @validate_int(min_value=1)
-    def frames(self, value: int) -> None: self._frames = value
-
-    @frames.deleter
-    def frames(self) -> None: self._frames = None
-
-
-    # ========== PROPERTY: framerate ==========
-    @property
-    def framerate(self) -> float | int | None: return self._framerate
-
-    @framerate.setter
-    # Framerate deve ser estritamente maior que 0
-    @validate_number(min_value=0.00001) 
-    def framerate(self, value: float | int) -> None: self._framerate = value
-
-    @framerate.deleter
-    def framerate(self) -> None: self._framerate = None
-
-
-    # ========== PROPERTY: size ==========
-    @property
-    def size(self) -> str | None: return self._size
-
-    @size.setter
-    @validate_video_size(VALID_SIZES)
-    def size(self, value: str) -> None: self._size = value
-
-    @size.deleter
-    def size(self) -> None: self._size = None
-
-
-    # ========== PROPERTY: pixel_format ==========
-    @property
-    def pixel_format(self) -> str | None: return self._pixel_format
-
-    @pixel_format.setter
-    @validate_choices(VALID_PIX_FMTS)
-    def pixel_format(self, value: str) -> None: self._pixel_format = value
-
-    @pixel_format.deleter
-    def pixel_format(self) -> None: self._pixel_format = None
-
-
-    # ========== PROPERTY: compression_level ==========
-    @property
-    def compression_level(self) -> int | None: return self._compression_level
-
-    @compression_level.setter
-    @validate_int(min_value=0, max_value=100)
-    def compression_level(self, value: int) -> None: self._compression_level = value
-
-    @compression_level.deleter
-    def compression_level(self) -> None: self._compression_level = None
-
-
-    # ========== PROPERTY: crf ==========
-    @property
-    def crf(self) -> int | None: return self._crf
-
-    @crf.setter
-    @validate_int(min_value=0, max_value=51)
-    def crf(self, value: int) -> None: self._crf = value
-
-    @crf.deleter
-    def crf(self) -> None: self._crf = None
-
-
-    # ========== MÉTODOS ==========
-    def generate_command_args(self) -> list:
-        args = []
-
-        if self._format:
-            args.extend(['-f', self._format])
-
-        if self._codec:
-            args.extend(['-c:v', self._codec])
-
-        if self._qscale is not None:
-            args.extend(['-qscale:v', str(self._qscale)])
-
-        if self._frames:
-            args.extend(['-frames:v', str(self._frames)])
-
-        if self._framerate:
-            args.extend(['-r', str(self._framerate)])
-
-        if self._size:
-            args.extend(['-s', self._size])
-
-        if self._pixel_format:
-            args.extend(['-pix_fmt', self._pixel_format])
-
-        if self._compression_level is not None:
-            args.extend(['-compression_level', str(self._compression_level)])
-
-        if self._crf is not None:
-            args.extend(['-crf', str(self._crf)])
-
-        return args
+    format = ChoiceOption(flag='-f', choices=VALID_FORMATS)
+    codec = ChoiceOption(flag='-c:v', choices=VALID_CODECS)
+    qscale = FloatOption(flag='-qscale:v', min_val=0)
+    frames = IntOption(flag='-frames:v', min_val=1)
+    framerate = FloatOption(flag='-r', min_val=0.00001)
+    size = VideoSizeOption(flag='-s', valid_sizes=VALID_SIZES)
+    pixel_format = ChoiceOption(flag='-pix_fmt', choices=VALID_PIX_FMTS)
+    compression_level = IntOption(flag='-compression_level', min_val=0, max_val=100)
+    crf = IntOption(flag='-crf', min_val=0, max_val=51)

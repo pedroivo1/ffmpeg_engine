@@ -7,7 +7,6 @@ VALID_AUDIO_OUT_OPTIONS = [
     ('format',       'mp3',           'mp3',           ['-f', 'mp3']),
     ('format',       'wav',           'wav',           ['-f', 'wav']),
     ('format',       'pcm_s16le',     'pcm_s16le',     ['-f', 'pcm_s16le']),
-    ('format',       'pcm_custom',    'pcm_custom',    ['-f', 'pcm_custom']), 
 
     ('codec',        'aac',           'aac',           ['-c:a', 'aac']),
     ('codec',        'libmp3lame',    'libmp3lame',    ['-c:a', 'libmp3lame']),

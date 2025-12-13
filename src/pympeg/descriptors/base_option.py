@@ -1,4 +1,5 @@
 from datetime import timedelta
+import re
 
 class BaseOption:
     def __init__(self, flag: str) -> None:
@@ -142,3 +143,63 @@ class SampleRateOption(BaseOption):
             raise ValueError(f"{self.name} must be positive")
             
         return final_value
+
+
+class VideoSizeOption(BaseOption):
+    def __init__(self, flag: str, valid_sizes: set[str]) -> None:
+        super().__init__(flag)
+        self.valid_sizes = valid_sizes
+
+    def validate(self, value: object) -> str:
+        s_val = str(value).lower()
+        
+        if s_val in self.valid_sizes:
+            return s_val
+            
+        if re.match(r'^\d+x\d+$', s_val):
+            return s_val
+            
+        raise ValueError(f"Invalid video size: '{value}'. Must be in valid list or WxH format.")
+
+
+class BitrateOption(BaseOption):
+    def validate(self, value: object) -> int:
+        if not isinstance(value, (int, str)):
+            raise TypeError(f"{self.name} must be int or str")
+        
+        if isinstance(value, int):
+            if value <= 0:
+                raise ValueError(f"{self.name} must be positive")
+            return value
+            
+        s_val = value.strip()
+        multiplier = 1
+        if s_val.lower().endswith('k'):
+            multiplier = 1000
+            s_val = s_val[:-1]
+        elif s_val.lower().endswith('m'):
+            multiplier = 1000000
+            s_val = s_val[:-1]
+            
+        try:
+            final_val = int(float(s_val) * multiplier)
+            if final_val <= 0:
+                raise ValueError
+            return final_val
+        except ValueError:
+            raise ValueError(f"Invalid bitrate format: '{value}'")
+
+
+class DictOption(BaseOption):
+    def validate(self, value: object) -> dict[str, str]:
+        if not isinstance(value, dict):
+            raise TypeError(f"{self.name} must be dict")
+        return value
+
+    def to_args(self, value: object) -> list[str]:
+        args = []
+        if isinstance(value, dict):
+            for k, v in value.items():
+                if k and v: # Ignora chaves/valores vazios
+                    args.extend([self.flag, f"{k}={v}"])
+        return args

@@ -3,12 +3,11 @@ from pympeg.descriptors import (
     ChoiceOption, 
     TimeOption, 
     IntOption, 
-    SampleRateOption  # O novo que criamos acima
+    SampleRateOption
 )
 
 class InputAudioOptions(Options):
     
-    # Constantes
     AUDIO_FORMATS = {
         'mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'aiff',
         's16le', 'f32be', 'pcm_s16le', 'alsa', 'pulse'

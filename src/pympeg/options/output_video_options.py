@@ -1,9 +1,12 @@
-from datetime import timedelta
 from pympeg.interfaces import Options
-from pympeg.utils.validation import (
-    validate_choices, time_to_string, validate_int, 
-    validate_positive_number, validate_video_size, 
-    convert_bitrate, validate_dict, validate_number
+from pympeg.descriptors import (
+    ChoiceOption, 
+    TimeOption, 
+    IntOption, 
+    FloatOption,
+    VideoSizeOption,
+    BitrateOption,
+    DictOption
 )
 
 class OutputVideoOptions(Options):
@@ -17,10 +20,6 @@ class OutputVideoOptions(Options):
         'vp8', 'libvpx', 'mpeg4', 'mpeg2video', 'prores', 'dnxhd', 
         'ffv1', 'copy', 'mjpeg', 'h264_nvenc', 'hevc_nvenc', 
         'av1', 'libaom-av1'
-    }
-    VALID_AUDIO_CODECS = {
-        'aac', 'libfdk_aac', 'mp3', 'libmp3lame', 'opus', 'libopus', 
-        'vorbis', 'libvorbis', 'flac', 'pcm_s16le', 'copy', 'ac3', 'eac3'
     }
     VALID_PIX_FMTS = {
         'yuv420p', 'yuv422p', 'yuv444p', 'rgb24', 'bgr24', 
@@ -48,249 +47,30 @@ class OutputVideoOptions(Options):
         'zerolatency', 'psnr', 'ssim'
     }
 
-    def __init__(
-        self,
-        format: str | None = None,
-        codec: str | None = None,
-        bitrate: str | int | None = None,
-        fps: float | int | None = None,
-        size: str | None = None,
-        pixel_format: str | None = None,
-        qscale: int | float | None = None,
-        duration: timedelta | float | int | None = None,
-        preset: str | None = None,
-        crf: int | None = None,
-        metadata: dict[str, str] | None = None,
-        movflags: str | None = None,
-        tune: str | None = None
-    ) -> None:
-        self._format: str | None = None
-        self._codec: str | None = None
-        self._bitrate: str | int | None = None
-        self._fps: float | int | None = None
-        self._size: str | None = None
-        self._pixel_format: str | None = None
-        self._qscale: int | float | None = None
-        self._duration: timedelta | float | int | None = None
-        self._preset: str | None = None
-        self._crf: int | None = None
-        self._metadata: dict[str, str] | None = None
-        self._movflags: str | None = None
-        self._tune: str | None = None
+    format: str | None
+    codec: str | None
+    bitrate: int | None
+    fps: float | int | None
+    size: str | None
+    pixel_format: str | None
+    qscale: float | int | None
+    duration: str | None
+    preset: str | None
+    crf: int | None
+    metadata: dict[str, str] | None
+    movflags: str | None
+    tune: str | None
 
-        if format is not None: self.format = format
-        if codec is not None: self.codec = codec
-        if bitrate is not None: self.bitrate = bitrate
-        if fps is not None: self.fps = fps
-        if size is not None: self.size = size
-        if pixel_format is not None: self.pixel_format = pixel_format
-        if qscale is not None: self.qscale = qscale
-        if duration is not None: self.duration = duration
-        if preset is not None: self.preset = preset
-        if crf is not None: self.crf = crf
-        if metadata is not None: self.metadata = metadata
-        if movflags is not None: self.movflags = movflags
-        if tune is not None: self.tune = tune
-
-
-    # ========== PROPERTIES: format ==========
-    @property
-    def format(self) -> str | None: return self._format
-
-    @format.setter
-    @validate_choices(VALID_FORMATS)
-    def format(self, value: str): self._format = value
-
-    @format.deleter
-    def format(self): self._format = None
-
-
-    # ========== PROPERTIES: codec ==========
-    @property
-    def codec(self) -> str | None: return self._codec
-
-    @codec.setter
-    @validate_choices(CODECS)
-    def codec(self, value: str): self._codec = value
-
-    @codec.deleter
-    def codec(self): self._codec = None
-
-
-    # ========== PROPERTIES: bitrate ==========
-    @property
-    def bitrate(self) -> int | None: return self._bitrate
-
-    @bitrate.setter
-    @convert_bitrate()
-    def bitrate(self, value: str | int): self._bitrate = value
-
-    @bitrate.deleter
-    def bitrate(self): self._bitrate = None
-
-
-    # ========== PROPERTIES: fps ==========
-    @property
-    def fps(self) -> float | int | None: return self._fps
-
-    @fps.setter
-    @validate_positive_number()
-    def fps(self, value: float | int): self._fps = value
-
-    @fps.deleter
-    def fps(self): self._fps = None
-
-
-    # ========== PROPERTIES: size ==========
-    @property
-    def size(self) -> str | None: return self._size
-
-    @size.setter
-    @validate_video_size(VALID_SIZES)
-    def size(self, value: str): self._size = value
-
-    @size.deleter
-    def size(self): self._size = None
-
-
-    # ========== PROPERTIES: pixel_format ==========
-    @property
-    def pixel_format(self) -> str | None: return self._pixel_format
-
-    @pixel_format.setter
-    @validate_choices(VALID_PIX_FMTS)
-    def pixel_format(self, value: str): self._pixel_format = value
-
-    @pixel_format.deleter
-    def pixel_format(self): self._pixel_format = None
-
-
-    # ========== PROPERTIES: qscale ==========
-    @property
-    def qscale(self) -> int | float | None: return self._qscale
-
-    @qscale.setter
-    @validate_number(min_value=0)
-    def qscale(self, value: int | float): self._qscale = value
-
-    @qscale.deleter
-    def qscale(self): self._qscale = None
-
-
-    # ========== PROPERTIES: duration ==========
-    @property
-    def duration(self) -> str | None: return self._duration
-
-    @duration.setter
-    @time_to_string()
-    def duration(self, value: str): self._duration = value
-
-    @duration.deleter
-    def duration(self): self._duration = None
-
-
-    # ========== PROPERTIES: preset ==========
-    @property
-    def preset(self) -> str | None: return self._preset
-
-    @preset.setter
-    @validate_choices(VALID_PRESETS)
-    def preset(self, value: str): self._preset = value
-
-    @preset.deleter
-    def preset(self): self._preset = None
-
-
-    # ========== PROPERTIES: crf ==========
-    @property
-    def crf(self) -> int | None: return self._crf
-
-    @crf.setter
-    @validate_int(min_value=0, max_value=51)
-    def crf(self, value: int): self._crf = value
-
-    @crf.deleter
-    def crf(self): self._crf = None
-
-
-    # ========== PROPERTIES: metadata ==========
-    @property
-    def metadata(self) -> dict | None: return self._metadata
-
-    @metadata.setter
-    @validate_dict()
-    def metadata(self, value: dict): self._metadata = value
-
-    @metadata.deleter
-    def metadata(self): self._metadata = None
-
-
-    # ========== PROPERTIES: movflags ==========
-    @property
-    def movflags(self) -> str | None: return self._movflags
-
-    @movflags.setter
-    @validate_choices(VALID_MOVFLAGS)
-    def movflags(self, value: str): self._movflags = value
-
-    @movflags.deleter
-    def movflags(self): self._movflags = None
-
-
-    # ========== PROPERTIES: tune ==========
-    @property
-    def tune(self) -> str | None: return self._tune
-
-    @tune.setter
-    @validate_choices(VALID_TUNES)
-    def tune(self, value: str): self._tune = value
-    
-    @tune.deleter
-    def tune(self): self._tune = None
-
-
-    # ========== MÉTODOS ==========
-    def generate_command_args(self) -> list:
-        args = []
-        if self._format is not None:
-            args.extend(['-f', self._format])
-        
-        if self._codec is not None:
-            args.extend(['-c:v', self._codec])
-   
-        if self._bitrate is not None:
-            args.extend(['-b:v', str(self._bitrate)])
-        
-        if self._fps is not None:
-            args.extend(['-r', str(self._fps)])
-        
-        if self._size is not None:
-            args.extend(['-s', self._size])
-        
-        if self._pixel_format is not None:
-            args.extend(['-pix_fmt', self._pixel_format])
-        
-        if self._qscale is not None:
-            args.extend(['-qscale:v', str(self._qscale)])
-        
-        if self._duration is not None:
-            args.extend(['-t', self._duration])
-        
-        if self._preset is not None:
-            args.extend(['-preset', self._preset])
-        
-        if self._crf is not None:
-            args.extend(['-crf', str(self._crf)])
-        
-        if self._metadata:
-            for key, value in self._metadata.items():
-                if key and value:
-                    args.extend(['-metadata', f'{key}={value}'])
-        
-        if self._movflags:
-            args.extend(['-movflags', self._movflags])
-
-        if self._tune:
-            args.extend(['-tune', self._tune])
-
-        return args
+    format = ChoiceOption(flag='-f', choices=VALID_FORMATS)
+    codec = ChoiceOption(flag='-c:v', choices=CODECS)
+    bitrate = BitrateOption(flag='-b:v')
+    fps = FloatOption(flag='-r', min_val=0.00001)
+    size = VideoSizeOption(flag='-s', valid_sizes=VALID_SIZES)
+    pixel_format = ChoiceOption(flag='-pix_fmt', choices=VALID_PIX_FMTS)
+    qscale = FloatOption(flag='-qscale:v', min_val=0)
+    duration = TimeOption(flag='-t')
+    preset = ChoiceOption(flag='-preset', choices=VALID_PRESETS)
+    crf = IntOption(flag='-crf', min_val=0, max_val=51)
+    metadata = DictOption(flag='-metadata')
+    movflags = ChoiceOption(flag='-movflags', choices=VALID_MOVFLAGS)
+    tune = ChoiceOption(flag='-tune', choices=VALID_TUNES)
