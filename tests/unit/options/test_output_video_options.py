@@ -2,6 +2,7 @@ import pytest
 from datetime import timedelta
 from pympeg import OutputVideoOptions
 
+
 # Estrutura: (atributo, valor_input, getter_esperado, args_esperados)
 VALID_VIDEO_OUT_OPTIONS = [
     # format
@@ -89,19 +90,15 @@ INVALID_VIDEO_OUT_OPTIONS = [
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_VIDEO_OUT_OPTIONS)
 def test_video_out_setters_valid_storage(attr, input_val, expected_getter, _args):
     options = OutputVideoOptions()
-
     setattr(options, attr, input_val)
-
     assert getattr(options, attr) == expected_getter
 
 
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_VIDEO_OUT_OPTIONS)
 def test_video_out_setters_invalid_raise_error(attr, val_inv, exception_type):
     options = OutputVideoOptions()
-
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
-
     assert getattr(options, attr) is None
 
 
@@ -109,31 +106,22 @@ def test_video_out_setters_invalid_raise_error(attr, val_inv, exception_type):
 def test_video_out_command_args_generation(attr, input_val, _expected, expected_args):
     input_args = {attr: input_val}
     options = OutputVideoOptions(**input_args)
-
     flags = options.generate_command_args()
-
     assert flags == expected_args
 
 
 def test_video_out_full_initialization():
     opts = OutputVideoOptions(
-        format='mp4',
-        codec='libx264',
-        preset='fast',
-        crf=23,
+        format='mp4', codec='libx264', preset='fast', crf=23,
         movflags='faststart'
     )
 
     assert opts.generate_command_args() == [
-        '-f', 'mp4', 
-        '-c:v', 'libx264', 
-        '-preset', 'fast', 
-        '-crf', '23', 
+        '-f', 'mp4', '-c:v', 'libx264', '-preset', 'fast', '-crf', '23', 
         '-movflags', 'faststart'
     ]
 
 
 def test_video_out_empty_initialization():
     options = OutputVideoOptions()
-
     assert options.generate_command_args() == []

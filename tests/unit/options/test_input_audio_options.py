@@ -2,6 +2,7 @@ import pytest
 from datetime import timedelta
 from pympeg import InputAudioOptions
 
+
 # Structure: (attribute, input_value, expected_getter, expected_args)
 VALID_ATTR_OPTIONS = [
 
@@ -61,19 +62,15 @@ INVALID_ATTR_OPTIONS = [
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_ATTR_OPTIONS)
 def test_audio_setters_valid_storage(attr, input_val, expected_getter, _args):
     options = InputAudioOptions()
-
     setattr(options, attr, input_val)
-
     assert getattr(options, attr) == expected_getter
 
 
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_ATTR_OPTIONS)
 def test_audio_setters_invalid_raise_error(attr, val_inv, exception_type):
     options = InputAudioOptions()
-
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
-
     assert getattr(options, attr) is None
 
 
@@ -81,9 +78,7 @@ def test_audio_setters_invalid_raise_error(attr, val_inv, exception_type):
 def test_audio_deleters_functionality(attr, input_val, _expected, _args):
     options = InputAudioOptions()
     setattr(options, attr, input_val)
-    
     delattr(options, attr)
-
     assert getattr(options, attr) is None
 
 
@@ -91,9 +86,7 @@ def test_audio_deleters_functionality(attr, input_val, _expected, _args):
 def test_audio_command_args_generation(attr, input_val, _expected, expected_args):
     input_args = {attr: input_val}
     options = InputAudioOptions(**input_args)
-    
     flags = options.generate_command_args()
-
     assert flags == expected_args
 
 
@@ -116,5 +109,4 @@ def test_audio_full_initialization():
 
 def test_audio_empty_initialization():
     options = InputAudioOptions()
-    
     assert options.generate_command_args() == []

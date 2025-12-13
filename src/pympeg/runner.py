@@ -1,8 +1,10 @@
 import subprocess
 import logging
+import shlex
 from pathlib import Path
 from typing import List
 from .interfaces import Options
+
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -27,7 +29,6 @@ class Runner:
         self._output_options.extend(options.generate_command_args())
 
     def _build_command(self, input_file: Path, output_file: Path) -> List[str]:
-        """Constrói o comando final na ordem correta do FFmpeg."""
         cmd = ['ffmpeg']
         cmd.extend(self._global_options)
         cmd.extend(self._input_options)
@@ -48,18 +49,18 @@ class Runner:
             raise ValueError('O input deve ser um arquivo ou pasta.')
 
     def run_file(self, input_file: Path, output_file: Path) -> None:
-        command = self._build_command(input_file, output_file)
-        
-        logger.info(f"Executando: {' '.join(command)}")
+        command_list = self._build_command(input_file, output_file)
+        command_str = shlex.join(command_list)
+
+        logger.info(f"Executando: {command_str}")
         try:
-            subprocess.run(command, check=True, text=True)
+            subprocess.run(command_list, check=True, text=True)
             logger.info('Comando executado com sucesso.')
         except subprocess.CalledProcessError as e:
             logger.error(f'FFmpeg falhou com código {e.returncode}.')
             raise e
-            
-    def run_batch(self) -> None:
 
+    def run_batch(self) -> None:
         extensions = ['*.mp4', '*.mkv', '*.mov', '*.avi', '*.webm']
         files = []
         for ext in extensions:

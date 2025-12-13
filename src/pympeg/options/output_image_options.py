@@ -1,11 +1,11 @@
 from pympeg.interfaces import Options
-from pympeg.constants import IMAGE_FORMATS, IMAGE_CODECS, IMAGE_SIZES, IMAGE_PIX_FMTS
-from pympeg.descriptors import (
-    ChoiceOption, 
-    IntOption, 
-    FloatOption, 
-    VideoSizeOption
+from pympeg.constants import (
+    IMAGE_FORMATS, IMAGE_CODECS, IMAGE_SIZES, IMAGE_PIX_FMTS
 )
+from pympeg.descriptors import (
+    ChoiceOption, IntOption, FloatOption, VideoSizeOption
+)
+
 
 class OutputImageOptions(Options):
 
@@ -18,7 +18,6 @@ class OutputImageOptions(Options):
     pixel_format: str | None
     compression_level: int | None
     crf: int | None
-
 
     format = ChoiceOption(flag='-f', choices=IMAGE_FORMATS)
     codec = ChoiceOption(flag='-c:v', choices=IMAGE_CODECS)

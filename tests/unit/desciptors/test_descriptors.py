@@ -1,24 +1,14 @@
 import pytest
 from datetime import timedelta
-from pympeg.descriptors.base_option import (
-    BaseOption,
-    ChoiceOption,
-    BoolOption,
-    IntOption,
-    FloatOption,
-    TimeOption,
-    SampleRateOption,
-    VideoSizeOption,
-    BitrateOption,
-    DictOption
-)
+from pympeg.descriptors import *
+
 
 class MockFfmpegOptions:
 
     generic = BaseOption('-gen')
     codec = ChoiceOption('-c:v', choices={'h264', 'hevc'})
     overwrite = BoolOption(true_flag='-y', false_flag='-n')
-    banner = BoolOption(true_flag='-hide_banner') # Sem flag falsa
+    banner = BoolOption(true_flag='-hide_banner')
     fps = IntOption('-r', min_val=1, max_val=120)
     speed = FloatOption('-speed', min_val=0.1, max_val=10.0)
     start = TimeOption('-ss')
@@ -27,38 +17,31 @@ class MockFfmpegOptions:
     bitrate = BitrateOption('-b:v')
     metadata = DictOption('-metadata')
 
+
 @pytest.fixture
 def mock_opts():
     return MockFfmpegOptions()
 
-# ==============================================================================
-# TESTES: BASE OPTION (Protocolo de Descriptor)
-# ==============================================================================
-
+# ===========================================================================
+# BaseOption
+# ===========================================================================
 def test_base_option_lifecycle(mock_opts):
-    """Testa o ciclo completo: set, get, to_args e delete."""
-    # 1. Getter inicial (valor padrão None)
     assert mock_opts.generic is None
 
-    # 2. Setter
     mock_opts.generic = "teste"
     assert mock_opts.generic == "teste"
     
-    # 3. Verificação no __dict__ interno
     assert mock_opts.__dict__['generic'] == "teste"
 
-    # 4. Geração de Argumentos
-    # Precisamos acessar o descriptor na classe para chamar to_args
     descriptor = MockFfmpegOptions.generic
     assert descriptor.to_args("teste") == ['-gen', 'teste']
 
-    # 5. Deleter
     del mock_opts.generic
     assert mock_opts.generic is None
     assert 'generic' not in mock_opts.__dict__
 
+
 def test_base_option_set_none_removes_attr(mock_opts):
-    """Setar None deve limpar o atributo do dicionário."""
     mock_opts.generic = "algo"
     assert mock_opts.generic is not None
     
@@ -66,93 +49,94 @@ def test_base_option_set_none_removes_attr(mock_opts):
     assert mock_opts.generic is None
     assert 'generic' not in mock_opts.__dict__
 
-# ==============================================================================
-# TESTES: CHOICE OPTION
-# ==============================================================================
-
+# ===========================================================================
+# ChoiceOption
+# ===========================================================================
 @pytest.mark.parametrize("value", ['h264', 'hevc'])
 def test_choice_option_valid(mock_opts, value):
     mock_opts.codec = value
     assert mock_opts.codec == value
 
+
 def test_choice_option_invalid(mock_opts):
     with pytest.raises(ValueError, match="not allowed"):
-        mock_opts.codec = 'vp9' # Não está no set de choices
+        mock_opts.codec = 'vp9'
 
-# ==============================================================================
-# TESTES: BOOL OPTION
-# ==============================================================================
 
+# ===========================================================================
+# BoolOption
+# ===========================================================================
 @pytest.mark.parametrize("input_val, expected_args", [
     (True, ['-y']),
     (False, ['-n']),
 ])
 def test_bool_option_args_double_flag(mock_opts, input_val, expected_args):
     """Testa booleano que tem flag para True E para False (ex: overwrite)."""
-    # Acessa o descriptor direto da classe
     desc = MockFfmpegOptions.overwrite
     assert desc.to_args(input_val) == expected_args
 
+
 @pytest.mark.parametrize("input_val, expected_args", [
     (True, ['-hide_banner']),
-    (False, []), # False não gera nada
+    (False, []),
 ])
 def test_bool_option_args_single_flag(mock_opts, input_val, expected_args):
-    """Testa booleano que só tem flag para True (ex: hide_banner)."""
     desc = MockFfmpegOptions.banner
     assert desc.to_args(input_val) == expected_args
 
+
 def test_bool_option_type_validation(mock_opts):
     with pytest.raises(TypeError, match="must be bool"):
-        mock_opts.overwrite = "True" # String não vale
+        mock_opts.overwrite = "True"
 
-# ==============================================================================
-# TESTES: INT OPTION
-# ==============================================================================
 
+# ===========================================================================
+# IntOption
+# ===========================================================================
 @pytest.mark.parametrize("value", [1, 60, 120])
 def test_int_option_valid(mock_opts, value):
     mock_opts.fps = value
     assert mock_opts.fps == value
 
+
 @pytest.mark.parametrize("invalid_val, error_type", [
-    (0, ValueError),        # Abaixo do min (1)
-    (121, ValueError),      # Acima do max (120)
-    ("60", TypeError),      # String
-    (60.5, TypeError),      # Float
-    (True, TypeError),      # Bool (Python trata True como 1, mas bloqueamos)
+    (0, ValueError),
+    (121, ValueError),
+    ("60", TypeError),
+    (60.5, TypeError),
+    (True, TypeError),
 ])
 def test_int_option_invalid(mock_opts, invalid_val, error_type):
     with pytest.raises(error_type):
         mock_opts.fps = invalid_val
 
-# ==============================================================================
-# TESTES: FLOAT OPTION
-# ==============================================================================
 
+# ===========================================================================
+# FloatOption
+# ===========================================================================
 @pytest.mark.parametrize("value, expected_type", [
     (5.5, float),
-    (5, int),  # Deve preservar INT se for passado INT
+    (5, int),
 ])
 def test_float_option_valid_and_types(mock_opts, value, expected_type):
     mock_opts.speed = value
     assert mock_opts.speed == value
-    # Garante que ele não converteu int 5 para float 5.0 desnecessariamente
     assert isinstance(mock_opts.speed, expected_type)
 
+
 @pytest.mark.parametrize("invalid_val, error_type", [
-    (0.05, ValueError),     # Abaixo do min
-    (10.1, ValueError),     # Acima do max
-    ("5.5", TypeError),     # String
+    (0.05, ValueError),
+    (10.1, ValueError),
+    ("5.5", TypeError),
 ])
 def test_float_option_invalid(mock_opts, invalid_val, error_type):
     with pytest.raises(error_type):
         mock_opts.speed = invalid_val
 
-# ==============================================================================
-# TESTES: TIME OPTION
-# ==============================================================================
 
+# ===========================================================================
+# TimeOption
+# ===========================================================================
 @pytest.mark.parametrize("input_val, expected_str", [
     (10, "10.000"),
     (10.5, "10.500"),
@@ -162,35 +146,36 @@ def test_float_option_invalid(mock_opts, invalid_val, error_type):
 ])
 def test_time_option_formatting(mock_opts, input_val, expected_str):
     """Testa a lógica de formatação do validador."""
-    # Como o validador roda no __set__, verificamos o valor salvo
     mock_opts.start = input_val
     assert mock_opts.start == expected_str
 
+
 @pytest.mark.parametrize("invalid_val, error_type", [
-    (-10, ValueError),              # Negativo Int
-    (timedelta(seconds=-1), ValueError), # Negativo Timedelta
-    ("10:00", TypeError),           # String direta (não suportada por enquanto)
+    (-10, ValueError),
+    (timedelta(seconds=-1), ValueError),
+    ("10:00", TypeError),
 ])
 def test_time_option_errors(mock_opts, invalid_val, error_type):
     with pytest.raises(error_type):
         mock_opts.start = invalid_val
 
-# ==============================================================================
-# TESTES: SAMPLE RATE OPTION
-# ==============================================================================
 
+# ===========================================================================
+# SampleRateOption
+# ===========================================================================
 @pytest.mark.parametrize("input_val, expected_int", [
     (44100, 44100),
-    (48000.0, 48000),       # Float para Int
-    ("44100", 44100),       # String numérica
-    ("44.1k", 44100),       # Sufixo k com ponto
-    ("48k", 48000),         # Sufixo k inteiro
-    ("44.1K", 44100),       # Case insensitive
+    (48000.0, 48000),
+    ("44100", 44100),
+    ("44.1k", 44100),
+    ("48k", 48000),
+    ("44.1K", 44100),
 ])
 def test_sample_rate_parsing(mock_opts, input_val, expected_int):
     mock_opts.ar = input_val
     assert mock_opts.ar == expected_int
     assert isinstance(mock_opts.ar, int)
+
 
 @pytest.mark.parametrize("invalid_val", [
     "invalid",
@@ -199,105 +184,103 @@ def test_sample_rate_parsing(mock_opts, input_val, expected_int):
     0
 ])
 def test_sample_rate_errors(mock_opts, invalid_val):
-    # Pode ser ValueError (string ruim, negativo) ou TypeError (objeto errado)
-    # Vamos pegar qualquer Exception para simplificar, ou especificar as duas
     with pytest.raises((ValueError, TypeError)):
         mock_opts.ar = invalid_val
 
 
-# ==============================================================================
-# TESTES: VIDEO SIZE OPTION
-# ==============================================================================
-
+# ===========================================================================
+# VideoSizeOption
+# ===========================================================================
 @pytest.mark.parametrize("input_val, expected", [
-    ('hd1080', 'hd1080'),   # Nome válido
-    ('4K', '4k'),           # Case insensitive
-    ('1920x1080', '1920x1080'), # Resolução WxH
+    ('hd1080', 'hd1080'),
+    ('4K', '4k'),
+    ('1920x1080', '1920x1080'),
     ('320x240', '320x240'),
 ])
 def test_video_size_valid(mock_opts, input_val, expected):
     mock_opts.size = input_val
     assert mock_opts.size == expected
 
+
 @pytest.mark.parametrize("invalid_val", [
-    'vga',          # Nome não está no set de valid_sizes do mock
-    '100',          # Número solto
-    '100x',         # Formato incompleto
+    'vga',
+    '100',
+    '100x',
     'x100',
-    'widthxheight', # Não numérico
-    1080            # Int não aceito
+    'widthxheight',
+    1080
 ])
 def test_video_size_invalid(mock_opts, invalid_val):
     with pytest.raises(ValueError, match="Invalid video size"):
         mock_opts.size = invalid_val
 
-# ==============================================================================
-# TESTES: BITRATE OPTION
-# ==============================================================================
 
+# ===========================================================================
+# BitrateOption
+# ===========================================================================
 @pytest.mark.parametrize("input_val, expected_int", [
-    (1000, 1000),           # Int direto
-    ('1000', 1000),         # String numérica
-    ('1k', 1000),           # Sufixo k
-    ('1.5k', 1500),         # Float com sufixo k
-    ('1M', 1000000),        # Sufixo M
-    ('1.5M', 1500000),      # Float com sufixo M
-    ('  2k  ', 2000),       # Espaços
+    (1000, 1000),
+    ('1000', 1000),
+    ('1k', 1000),
+    ('1.5k', 1500),
+    ('1M', 1000000),
+    ('1.5M', 1500000),
+    ('  2k  ', 2000),
 ])
 def test_bitrate_valid(mock_opts, input_val, expected_int):
     mock_opts.bitrate = input_val
     assert mock_opts.bitrate == expected_int
     assert isinstance(mock_opts.bitrate, int)
 
+
 @pytest.mark.parametrize("invalid_val, error_type", [
-    (0, ValueError),        # Zero
-    (-100, ValueError),     # Negativo
-    ('0k', ValueError),     # Zero string
-    ('invalid', ValueError),# Lixo
-    (10.5, TypeError),      # Float puro não é aceito (deve ser int ou str)
-    ({}, TypeError),        # Tipo errado
+    (0, ValueError),
+    (-100, ValueError),
+    ('0k', ValueError),
+    ('invalid', ValueError),
+    (10.5, TypeError),
+    ({}, TypeError),
 ])
 def test_bitrate_invalid(mock_opts, invalid_val, error_type):
     with pytest.raises(error_type):
         mock_opts.bitrate = invalid_val
 
-# ==============================================================================
-# TESTES: DICT OPTION
-# ==============================================================================
 
+# ===========================================================================
+# DictOption
+# ===========================================================================
 def test_dict_option_valid(mock_opts):
     data = {'title': 'My Video', 'year': '2024'}
     mock_opts.metadata = data
     assert mock_opts.metadata == data
 
+
 def test_dict_option_to_args(mock_opts):
     """Testa se o dicionário é expandido em múltiplos argumentos."""
-    data = {'title': 'Test', 'genre': ''} # Valor vazio deve ser ignorado
+    data = {'title': 'Test', 'genre': ''}
     mock_opts.metadata = data
     
-    # Acessa o descriptor na classe
     desc = MockFfmpegOptions.metadata
     args = desc.to_args(data)
     
-    # Esperamos apenas 'title' porque 'genre' está vazio
     assert args == ['-metadata', 'title=Test']
+
 
 def test_dict_option_multiple_args(mock_opts):
     data = {'a': '1', 'b': '2'}
     desc = MockFfmpegOptions.metadata
     args = desc.to_args(data)
     
-    # A ordem pode variar em dicionários (pré-Python 3.7), mas assumindo moderno:
-    # Deve conter [-metadata, a=1, -metadata, b=2]
     assert len(args) == 4
     assert args[0] == '-metadata'
     assert args[2] == '-metadata'
     assert 'a=1' in args
     assert 'b=2' in args
 
+
 def test_dict_option_invalid(mock_opts):
     with pytest.raises(TypeError, match="must be dict"):
         mock_opts.metadata = "not a dict"
     
     with pytest.raises(TypeError):
-        mock_opts.metadata = [('key', 'value')] # Lista de tuplas não é dict
+        mock_opts.metadata = [('key', 'value')]

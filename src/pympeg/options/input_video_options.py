@@ -1,12 +1,9 @@
 from pympeg.interfaces import Options
 from pympeg.constants import VIDEO_FORMATS, VIDEO_CODECS, VIDEO_SIZES, VIDEO_PIX_FMTS
 from pympeg.descriptors import (
-    ChoiceOption, 
-    TimeOption, 
-    FloatOption, 
-    IntOption,
-    VideoSizeOption
+    ChoiceOption, TimeOption, FloatOption, IntOption, VideoSizeOption
 )
+
 
 class InputVideoOptions(Options):
 

@@ -1,6 +1,7 @@
 import pytest
 from pympeg import OutputImageOptions
 
+
 # Structure: (atributo, valor_input, getter_esperado, args_esperados)
 VALID_IMAGE_OPTIONS = [
     ('format',             'png',           'png',           ['-f', 'png']),
@@ -66,48 +67,38 @@ INVALID_IMAGE_OPTIONS = [
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_IMAGE_OPTIONS)
 def test_image_setters_valid_storage(attr, input_val, expected_getter, _args):
     options = OutputImageOptions()
-
     setattr(options, attr, input_val)
-
     assert getattr(options, attr) == expected_getter
 
 
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_IMAGE_OPTIONS)
 def test_image_setters_invalid_raise_error(attr, val_inv, exception_type):
     options = OutputImageOptions()
-
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
-
     assert getattr(options, attr) is None
+
 
 @pytest.mark.parametrize('attr, input_val, _expected, expected_args', VALID_IMAGE_OPTIONS)
 def test_image_command_args_generation(attr, input_val, _expected, expected_args):
     input_args = {attr: input_val}
     options = OutputImageOptions(**input_args)
-
     flags = options.generate_command_args()
-    
     assert flags == expected_args
+
 
 def test_image_full_initialization():
     opts = OutputImageOptions(
-        format='png',
-        codec='png',
-        qscale=2,
-        size='1920x1080',
+        format='png', codec='png', qscale=2, size='1920x1080',
         compression_level=90
     )
 
     assert opts.generate_command_args() == [
-        '-f', 'png', 
-        '-c:v', 'png', 
-        '-qscale:v', '2', 
-        '-s', '1920x1080', 
+        '-f', 'png', '-c:v', 'png', '-qscale:v', '2', '-s', '1920x1080', 
         '-compression_level', '90'
     ]
 
+
 def test_image_empty_initialization():
     options = OutputImageOptions()
-
     assert options.generate_command_args() == []

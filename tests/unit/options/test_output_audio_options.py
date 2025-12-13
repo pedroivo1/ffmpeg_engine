@@ -2,6 +2,7 @@ import pytest
 from datetime import timedelta
 from pympeg import OutputAudioOptions
 
+
 # Structure: (atributo, valor_input, getter_esperado, args_esperados)
 VALID_AUDIO_OUT_OPTIONS = [
     ('format',       'mp3',           'mp3',           ['-f', 'mp3']),
@@ -62,22 +63,19 @@ INVALID_AUDIO_OUT_OPTIONS = [
     ('metadata',     123,             TypeError),
 ]
 
+
 @pytest.mark.parametrize('attr, input_val, expected_getter, _args', VALID_AUDIO_OUT_OPTIONS)
 def test_audio_out_setters_valid_storage(attr, input_val, expected_getter, _args):
     options = OutputAudioOptions()
-
     setattr(options, attr, input_val)
-
     assert getattr(options, attr) == expected_getter
 
 
 @pytest.mark.parametrize('attr, val_inv, exception_type', INVALID_AUDIO_OUT_OPTIONS)
 def test_audio_out_setters_invalid_raise_error(attr, val_inv, exception_type):
     options = OutputAudioOptions()
-
     with pytest.raises(exception_type):
         setattr(options, attr, val_inv)
-
     assert getattr(options, attr) is None
 
 
@@ -86,7 +84,7 @@ def test_audio_out_command_args_generation(attr, input_val, _expected, expected_
     input_args = {attr: input_val}
     options = OutputAudioOptions(**input_args)
     flags = options.generate_command_args()
-    
+
     if attr == 'metadata':
         assert sorted(flags) == sorted(expected_args)
     else:
@@ -95,18 +93,12 @@ def test_audio_out_command_args_generation(attr, input_val, _expected, expected_
 
 def test_audio_out_full_initialization():
     opts = OutputAudioOptions(
-        format='mp3',
-        codec='libmp3lame',
-        bitrate='192k',
-        sample_rate=44100,
+        format='mp3', codec='libmp3lame', bitrate='192k', sample_rate=44100,
         n_channels=2
     )
 
     assert opts.generate_command_args() == [
-        '-f', 'mp3', 
-        '-c:a', 'libmp3lame', 
-        '-b:a', '192000', 
-        '-ar', '44100', 
+        '-f', 'mp3', '-c:a', 'libmp3lame', '-b:a', '192000', '-ar', '44100',
         '-ac', '2'
     ]
 

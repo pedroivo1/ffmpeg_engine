@@ -2,6 +2,7 @@ from pympeg.interfaces import Options
 from pympeg.constants import IMAGE_FORMATS
 from pympeg.descriptors import ChoiceOption, TimeOption, IntOption, FloatOption
 
+
 class InputImageOptions(Options):
     
     format: str | None

@@ -1,11 +1,9 @@
 from pympeg.interfaces import Options
 from pympeg.constants import AUDIO_FORMATS, AUDIO_CODECS
 from pympeg.descriptors import (
-    ChoiceOption, 
-    TimeOption, 
-    IntOption, 
-    SampleRateOption
+    ChoiceOption, TimeOption, IntOption, SampleRateOption
 )
+
 
 class InputAudioOptions(Options):
 

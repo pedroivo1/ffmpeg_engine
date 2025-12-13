@@ -2,6 +2,7 @@ from pympeg.interfaces import Options
 from pympeg.descriptors import ChoiceOption, BoolOption
 from pympeg.constants import LOGLEVEL_VALUES
 
+
 class GlobalOptions(Options):
 
     overwrite: bool | None

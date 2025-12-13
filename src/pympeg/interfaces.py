@@ -1,6 +1,7 @@
 from abc import ABC
 from .descriptors import BaseOption
 
+
 class Options(ABC):
     def __init__(self, **kwargs) -> None:
         for key, value in kwargs.items():
@@ -18,5 +19,5 @@ class Options(ABC):
                 
                 if value is not None:
                     args.extend(attr_value.to_args(value))
-        
+
         return args

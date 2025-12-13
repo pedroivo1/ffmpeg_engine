@@ -1,31 +1,12 @@
 .PHONY: test-unit
-.PHONY: test-ordered
-.PHONY: test-global-options
-.PHONY: test-image-in-options
+.PHONY: test-options
+.PHONY: test-desciptors
 
 test-unit:
 	python -m pytest tests/unit/
 
-test-ordered:
-	python -m pytest tests/unit/test_flags.py tests/unit/test_builders.py tests/unit/test_runner.py
+test-options:
+	python -m pytest .\tests\unit\options\
 
-test-global-options:
-	python -m pytest .\tests\unit\options\test_global_options.py
-
-test-image-in-options:
-	python -m pytest .\tests\unit\options\test_image_input_options.py
-
-test-audio-in-options:
-	python -m pytest .\tests\unit\options\test_audio_input_options.py
-
-test-video-in-options:
-	python -m pytest .\tests\unit\options\test_video_input_options.py
-
-test-image-out-options:
-	python -m pytest .\tests\unit\options\test_image_output_options.py
-
-test-audio-out-options:
-	python -m pytest .\tests\unit\options\test_audio_output_options.py
-
-test-video-out-options:
-	python -m pytest .\tests\unit\options\test_video_output_options.py
+test-desciptors:
+	python -m pytest .\tests\unit\desciptors\

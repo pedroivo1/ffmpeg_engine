@@ -1,14 +1,10 @@
 from pympeg.interfaces import Options
 from pympeg.constants import AUDIO_FORMATS, AUDIO_CODECS
 from pympeg.descriptors import (
-    ChoiceOption, 
-    TimeOption, 
-    IntOption, 
-    FloatOption,
-    SampleRateOption,
-    BitrateOption,
-    DictOption
+    ChoiceOption, TimeOption, IntOption, FloatOption, SampleRateOption,
+    BitrateOption, DictOption
 )
+
 
 class OutputAudioOptions(Options):
 
