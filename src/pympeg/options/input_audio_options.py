@@ -1,4 +1,5 @@
 from pympeg.interfaces import Options
+from pympeg.constants import AUDIO_FORMATS, AUDIO_CODECS
 from pympeg.descriptors import (
     ChoiceOption, 
     TimeOption, 
@@ -7,14 +8,6 @@ from pympeg.descriptors import (
 )
 
 class InputAudioOptions(Options):
-    
-    AUDIO_FORMATS = {
-        'mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'aiff',
-        's16le', 'f32be', 'pcm_s16le', 'alsa', 'pulse'
-    }
-    AUDIO_CODECS = {
-        'mp3', 'flac', 'aac', 's16le', 'f32be', 'pcm_s16le'
-    }
 
     format: str | None
     codec: str | None

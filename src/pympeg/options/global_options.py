@@ -1,12 +1,8 @@
 from pympeg.interfaces import Options
 from pympeg.descriptors import ChoiceOption, BoolOption
+from pympeg.constants import LOGLEVEL_VALUES
 
 class GlobalOptions(Options):
-
-    LOGLEVEL_VALUES = {
-        'quiet', 'panic', 'fatal', 'error', 'warning', 
-        'info', 'verbose', 'debug', 'trace'
-    }
 
     overwrite: bool | None
     hide_banner: bool | None

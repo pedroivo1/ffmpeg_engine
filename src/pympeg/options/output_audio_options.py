@@ -1,4 +1,5 @@
 from pympeg.interfaces import Options
+from pympeg.constants import AUDIO_FORMATS, AUDIO_CODECS
 from pympeg.descriptors import (
     ChoiceOption, 
     TimeOption, 
@@ -11,18 +12,6 @@ from pympeg.descriptors import (
 
 class OutputAudioOptions(Options):
 
-    VALID_FORMATS = {
-        'mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'aiff',
-        'opus', 'ac3', 'eac3', 'dts',
-        'pcm_s16le', 'pcm_s24le', 'pcm_f32le'
-    }
-    VALID_CODECS = {
-        'mp3', 'libmp3lame', 'flac', 'aac', 'libfdk_aac',
-        'opus', 'libopus', 'vorbis', 'libvorbis',
-        'pcm_s16le', 'pcm_s24le', 'pcm_f32le',
-        'ac3', 'eac3', 'dts', 'copy'
-    }
-
     format: str | None
     codec: str | None
     bitrate: int | None
@@ -32,8 +21,8 @@ class OutputAudioOptions(Options):
     duration: str | None
     metadata: dict[str, str] | None
 
-    format = ChoiceOption(flag='-f', choices=VALID_FORMATS)
-    codec = ChoiceOption(flag='-c:a', choices=VALID_CODECS)
+    format = ChoiceOption(flag='-f', choices=AUDIO_FORMATS)
+    codec = ChoiceOption(flag='-c:a', choices=AUDIO_CODECS | {'copy'})
     bitrate = BitrateOption(flag='-b:a')
     sample_rate = SampleRateOption(flag='-ar')
     n_channels = IntOption(flag='-ac', min_val=1)
