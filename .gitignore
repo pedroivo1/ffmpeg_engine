@@ -13,3 +13,4 @@ pympeg.egg-info/
 
 # Personal
 .data/
+*.sublime-workspace
