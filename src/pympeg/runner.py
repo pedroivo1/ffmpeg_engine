@@ -52,7 +52,7 @@ class Runner:
         command_list = self._build_command(input_file, output_file)
         command_str = shlex.join(command_list)
 
-        logger.info(f"Executando: {command_str}")
+        logger.info(f"cmd: {command_str}")
         try:
             subprocess.run(command_list, check=True, text=True)
             logger.info('Comando executado com sucesso.')

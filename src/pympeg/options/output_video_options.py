@@ -4,8 +4,8 @@ from pympeg.constants import (
     VIDEO_MOVFLAGS, VIDEO_TUNES
 )
 from pympeg.descriptors import (
-    ChoiceOption, TimeOption, IntOption, FloatOption, VideoSizeOption,
-    BitrateOption, DictOption
+    BaseOption, ChoiceOption, TimeOption, IntOption, FloatOption,
+    VideoSizeOption, BitrateOption, DictOption
 )
 
 
@@ -24,6 +24,7 @@ class OutputVideoOptions(Options):
     metadata: dict[str, str] | None
     movflags: str | None
     tune: str | None
+    x265_params: str | None
 
     format = ChoiceOption(flag='-f', choices=VIDEO_FORMATS)
     codec = ChoiceOption(flag='-c:v', choices=VIDEO_CODECS)
@@ -38,3 +39,4 @@ class OutputVideoOptions(Options):
     metadata = DictOption(flag='-metadata')
     movflags = ChoiceOption(flag='-movflags', choices=VIDEO_MOVFLAGS)
     tune = ChoiceOption(flag='-tune', choices=VIDEO_TUNES)
+    x265_params = BaseOption(flag='-x265-params')
