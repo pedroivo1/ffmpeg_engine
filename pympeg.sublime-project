@@ -4,16 +4,19 @@
 		{
 			"path": ".",
 		},
+		{
+			"path": "/home/user/Documents/github/Markup-Vault"
+		},
 	],
 	"build_systems": [
-	    {
-        "name": "Pytest Run",
-        "cmd": [".venv\\Scripts\\python.exe", "-m", "pytest"],
-        "shell": true,
-        "working_dir": "${project_path}",
-        "selector": "source.python",
-	    }
-	],
+        {
+            "name": "Run Pytest (.venv)",
+            "cmd": ["${project_path}/.venv/bin/python3", "-m", "pytest", "-v"],
+            "shell": true,
+            "working_dir": "${project_path}",
+            "selector": "source.python"
+        }
+    ],
 	"settings": {
 		"tab_size": 4,
 		"translate_tabs_to_spaces": true,
