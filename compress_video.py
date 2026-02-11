@@ -1,6 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import logging
-import re
-import sys
+import time
 from pathlib import Path
 from pympeg import Builder, GlobalOptions, OutputVideoOptions, OutputAudioOptions
 
@@ -14,38 +16,38 @@ def main(path: str):
     root_path = Path(path)
 
     if not root_path.exists():
-        logger.error(f"❌ A pasta {root_path} não existe, meu!")
+        logger.error(f"A pasta {root_path} não existe, meu!")
         return
 
     files = list(root_path.rglob('*.mp4'))
-    logger.info(f"📂 Encontrados {len(files)} arquivos .mp4 para processar.")
+    logger.info(f"\nEncontrados {len(files)} arquivos .mp4 para processar.")
 
     for video_file in files:
         novo_nome = gerar_nome_formatado(video_file)
-        
+
         if not novo_nome:
-            logger.warning(f"⚠️ Padrão 'Aula/Bloco' não encontrado em: {video_file.name}. Pulando...")
+            logger.warning(f"Padrão 'Aula/Bloco' não encontrado em: {video_file.name}. Pulando...")
             continue
-            
+
         output_file = video_file.with_name(novo_nome)
 
         if output_file.exists():
             if output_file.resolve() == video_file.resolve():
                 continue
-            logger.warning(f"⏭ O arquivo final já existe: {output_file.name}. Pulando conversão.")
+            logger.warning(f"O arquivo final já existe: {output_file.name}. Pulando conversão.")
             continue
 
         fps = get_fps(video_file)
         if fps is None:
-            logger.error(f"⛔ Pulando {video_file.name} (FPS não detectado).")
+            logger.error(f"Pulando {video_file.name} (FPS não detectado).")
             continue
 
         fps_rounded = round(fps, 3)
         target_fps = 29.97 if fps_rounded in [59.94, 29.97] else 24
 
-        logger.info(f"🎬 Comprimindo: {video_file.name}")
-        logger.info(f"   └─> Destino: {output_file.name}")
-        logger.info(f"   ⚙️ FPS: {fps_rounded} -> {target_fps}")
+        logger.info(f"Comprimindo: {video_file.name}")
+        logger.info(f" └─> Destino: {output_file.name}")
+        logger.info(f" FPS: {fps_rounded} -> {target_fps}")
 
         try:
             (
@@ -54,20 +56,21 @@ def main(path: str):
                     GlobalOptions(hide_banner=True, loglevel='warning', stats=True, overwrite=False)
                 )
                 .with_output_options(
-                    OutputVideoOptions(codec='libx265', crf=32, fps=target_fps, x265_params='log-level=error')
+                    OutputVideoOptions(codec='libx265', crf=32, fps=target_fps, x265_params='log-level=error', preset='slow')
                 )
                 .with_output_options(
                     OutputAudioOptions(codec='aac', bitrate='64k')
                 )
                 .run()
             )
-            logger.info(f"✅ Sucesso! Vídeo novo criado.\n")
-            
+            logger.info(f"Sucesso! Vídeo novo criado.\n")
+
             # Opcional: Se quiser apagar o original pesado depois, descomente a linha abaixo:
-            # video_file.unlink() 
-            
+            # video_file.unlink()
+
         except Exception as e:
-            logger.error(f"💥 Erro na conversão: {e}\n")
+            logger.error(f"Erro na conversão: {e}\n")
 
 if __name__ == '__main__':
-    main(r'/home/pedro/Videos/n')
+    main(r'/media/pedro/Expansion Drive/G7/0 - DOWNLOAD PACKAGE/antigos/c')
+

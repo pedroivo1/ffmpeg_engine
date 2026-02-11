@@ -9,10 +9,10 @@ def get_fps(file_path: Path) -> float | None:
 
     for entry in methods:
         cmd = [
-            'ffprobe', 
-            '-v', 'error', 
-            '-select_streams', 'v:0', 
-            '-show_entries', f'stream={entry}', 
+            'ffprobe',
+            '-v', 'error',
+            '-select_streams', 'v:0',
+            '-show_entries', f'stream={entry}',
             '-of', 'default=noprint_wrappers=1:nokey=1',
             str(file_path.resolve())
         ]
@@ -33,12 +33,12 @@ def get_fps(file_path: Path) -> float | None:
                     num, den = parts
                     if float(den) == 0: continue
                     return float(num) / float(den)
-            
+
             return float(output)
 
         except Exception as e:
             if entry == methods[-1]:
                 msg = getattr(e, 'output', str(e)).strip()
-                logger.error(f"❌ Falha ao ler FPS de '{file_path.name}':\n   --> {msg}")
+                logger.error(f"Falha ao ler FPS de '{file_path.name}':\n   --> {msg}")
 
     return None

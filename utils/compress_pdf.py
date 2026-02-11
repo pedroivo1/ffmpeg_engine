@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import subprocess
 import sys
 import logging
@@ -25,7 +27,7 @@ def comprimir_pdf_ghostscript(entrada, saida, qualidade='/ebook'):
 
 def processar_arquivo(arquivo_alvo: Path):
     """Aplica a lógica de renomear e comprimir em um único arquivo."""
-    
+
     # Pulo do gato: Se o arquivo já termina com ' - o', ignora pra não comprimir backup
     if arquivo_alvo.stem.endswith(" - o"):
         return
@@ -43,7 +45,7 @@ def processar_arquivo(arquivo_alvo: Path):
     try:
         # 1. Renomeia o original para " - o"
         arquivo_alvo.rename(arquivo_backup)
-        
+
         # 2. Tenta comprimir (Entrada: backup, Saída: nome original)
         sucesso = comprimir_pdf_ghostscript(entrada=arquivo_backup, saida=arquivo_alvo)
 
@@ -63,11 +65,11 @@ def main(caminho_inicial=None):
     # 1. Se você passou o caminho direto na chamada da função (lá embaixo), usa ele.
     if caminho_inicial:
         entrada_str = caminho_inicial
-    
+
     # 2. Se não, tenta pegar o argumento do terminal (sys.argv)
     elif len(sys.argv) > 1:
         entrada_str = sys.argv[1]
-        
+
     # 3. Se não tem nenhum dos dois, chora.
     else:
         logger.info("Uso: python script.py <arquivo_ou_pasta>")
@@ -83,18 +85,18 @@ def main(caminho_inicial=None):
     if entrada.is_dir():
         logger.info(f"📂 Varrendo a pasta: {entrada}")
         logger.info("-" * 40)
-        
+
         # rglob pega todas as subpastas
         arquivos = list(entrada.rglob("*.pdf"))
         total = len(arquivos)
-        
+
         if total == 0:
             logger.info("Nenhum PDF encontrado nessa pasta.")
             return
 
         for i, pdf in enumerate(arquivos, 1):
             processar_arquivo(pdf)
-            
+
         logger.info("-" * 40)
         logger.info("🏁 Processamento em lote finalizado.")
 
@@ -107,5 +109,5 @@ def main(caminho_inicial=None):
 
 if __name__ == "__main__":
     # Agora sim! Pode passar o caminho aqui ou deixar vazio pra usar o terminal
-    main(r'/home/pedro/Videos/Aula 06')
+    main(r'/media/pedro/Expansion Drive/G7/0 - DOWNLOAD PACKAGE')
 
